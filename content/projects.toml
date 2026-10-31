@@ -1,0 +1,1785 @@
+# =============================================================================
+#  Contenido del portfolio
+#  ---------------------------------------------------------------------------
+#  Edita este fichero y ejecuta:   python3 tools/build.py
+#  Se regeneran proyectos/*.html, las tarjetas de index.html y sitemap.xml.
+#
+#  Texto con formato mínimo: **negrita** y `código`.
+#  Párrafos: separa con una línea en blanco.
+#  Iconos disponibles: ver tools/icons.py
+# =============================================================================
+
+[site]
+name = "José Luis Pérez Lara"
+short_role = "Backend & Automation Engineer"
+base_url = "https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/"
+email = "joseluisperez232003@gmail.com"
+linkedin = "https://www.linkedin.com/in/jose-luis-perez-lara/"
+github = "https://github.com/JoseLuixrax"
+
+# Filtros de la sección de proyectos (el orden importa en la portada)
+[[categories]]
+id = "ecommerce"
+label = "E-commerce"
+
+[[categories]]
+id = "automatizacion"
+label = "Automatización"
+
+[[categories]]
+id = "infra"
+label = "Infraestructura"
+
+[[categories]]
+id = "datos"
+label = "Datos & BI"
+
+[[categories]]
+id = "ia"
+label = "IA aplicada"
+
+[[categories]]
+id = "personal"
+label = "Proyecto personal"
+
+
+# =============================================================================
+#  1 · Sistema FBA
+# =============================================================================
+[[projects]]
+slug = "sistema-fba-amazon"
+title = "Sistema de gestión FBA para Amazon"
+kicker = "VapoSelección · Amazon FBA"
+category = "ecommerce"
+filters = ["ecommerce", "automatizacion", "datos"]
+status = "En producción"
+period = "2025 – actualidad"
+role = "Diseño, desarrollo y mantenimiento"
+context = "E-commerce multicanal · 4 marketplaces"
+summary = "Automatización end-to-end de la operativa FBA en 4 marketplaces: reportes vía SP-API, cálculo de reposición, inventario envejecido por tramos y etiquetas FNSKU generadas sin intervención manual."
+tagline = "De descargar CSV a mano a un sistema que calcula qué enviar a Amazon, qué liquidar y genera las etiquetas por sí solo."
+tags = ["Python", "Amazon SP-API", "n8n", "Pandas", "Google Sheets", "Docker"]
+confidential = true
+problem = """
+La operativa de Amazon FBA en cuatro países dependía de tareas manuales: descargar reportes desde Seller Central, cruzarlos en Excel para decidir la reposición, revisar a ojo el inventario que llevaba meses sin venderse y preparar etiquetas FNSKU y plantillas de envío producto a producto.
+
+Era lento, dependía de una persona concreta y era fácil equivocarse de cantidades o de marketplace. Además, el stock que no rota en FBA genera **tarifas de almacenamiento prolongado**, así que detectarlo tarde cuesta dinero.
+"""
+solution = """
+Construí un conjunto de flujos sobre **Amazon SP-API** orquestados con **n8n** y apoyados en **Python** para el procesado de datos. Cada flujo cubre una pieza de la operativa: reposición, inventario envejecido, etiquetas FNSKU y plantillas de envío.
+
+Los procesos programados se ejecutan solos y entregan el resultado por email o en Google Drive. Los que necesitan una decisión humana (qué envío preparar, para qué marketplace) se lanzan desde un **formulario interno**, sin tocar código ni Seller Central.
+"""
+learnings = """
+Diseñar para el fallo: en integraciones con APIs externas lo normal es que algo falle (reportes cancelados, ficheros vacíos, límites de peticiones). Notificar con contexto claro vale más que reintentar a ciegas, y es lo que hace que el equipo confíe en la automatización.
+"""
+results = [
+  "Reposición calculada de forma programada con datos reales de ventas y stock de cada marketplace.",
+  "Visibilidad del inventario envejecido antes de que genere tarifas de almacenamiento prolongado.",
+  "Etiquetas FNSKU de un envío completo generadas en minutos desde un formulario.",
+  "Proceso independiente de una persona concreta: cualquiera del equipo puede lanzarlo.",
+]
+
+[[projects.kpis]]
+value = "4"
+label = "marketplaces automatizados: España, Francia, Alemania e Italia"
+[[projects.kpis]]
+value = "30 → 270+"
+label = "días: segmentación del inventario envejecido por tramos"
+[[projects.kpis]]
+value = "1 formulario"
+label = "para generar las etiquetas FNSKU de un envío completo"
+
+[[projects.flow]]
+title = "Disparador"
+text = "Cron programado o formulario interno de n8n"
+[[projects.flow]]
+title = "Autenticación LWA"
+text = "Token OAuth de Login with Amazon renovado en cada ejecución"
+[[projects.flow]]
+title = "Reports API"
+text = "Creación del reporte por marketplace, sondeo de estado y descarga"
+[[projects.flow]]
+title = "Procesado Python"
+text = "Cruce de ventas y stock, reposición y tramos de antigüedad"
+[[projects.flow]]
+title = "Entrega"
+text = "Excel en Google Drive y resumen por email al equipo"
+
+[[projects.features]]
+title = "Reposición FBA"
+text = "Cruza el inventario FBA con las ventas de los últimos 7 días para proponer cantidades por SKU y marketplace, y deja el fichero actualizado en Google Drive."
+[[projects.features]]
+title = "Inventario envejecido"
+text = "Segmenta el stock por días sin venta (30+, 60+, 90+, 180+ y 270+) y propone liquidaciones antes de que lleguen las tarifas de almacenamiento prolongado."
+[[projects.features]]
+title = "Etiquetas FNSKU"
+text = "A partir de la hoja del envío pide a SP-API las etiquetas de producto, descarga el PDF listo para la impresora térmica y lo envía por email."
+[[projects.features]]
+title = "Plantillas de envío"
+text = "Genera la plantilla de envío de Amazon del marketplace correcto, validando antes que la hoja tiene todas las columnas necesarias."
+[[projects.features]]
+title = "Margen en la decisión"
+text = "La reposición consulta sub-flujos de margen y de catálogo de proveedor para no reponer productos que no son rentables."
+[[projects.features]]
+title = "Errores explicados"
+text = "Reportes en estado `FATAL`, hojas mal formadas o columnas ausentes generan un email explicando qué ha fallado, en lugar de fallar en silencio."
+
+[[projects.stack]]
+name = "Amazon SP-API"
+why = "Reports API, FBA Inventory y Product Labels: la fuente de verdad de Amazon, sin scraping ni exportaciones manuales."
+[[projects.stack]]
+name = "n8n"
+why = "Orquestación, esperas asíncronas, reintentos y formularios para el equipo."
+[[projects.stack]]
+name = "Python + Pandas"
+why = "Transformaciones de datos que en nodos visuales serían frágiles y difíciles de mantener."
+[[projects.stack]]
+name = "Google Sheets / Drive"
+why = "La interfaz que el equipo ya conoce para revisar y ajustar las propuestas."
+[[projects.stack]]
+name = "Docker"
+why = "Todo corre en contenedores en el VPS propio de la empresa."
+
+[[projects.challenges]]
+title = "Reportes asíncronos"
+text = "Los reportes de SP-API no son inmediatos: hay que crearlos, sondear su estado y descargar el documento. Implementé esperas con control de estados `DONE` / `FATAL` / `CANCELLED` por marketplace para que un país lento no bloquee al resto."
+[[projects.challenges]]
+title = "Documentos comprimidos o planos"
+text = "Según el tipo de reporte y el país, el documento llega comprimido en GZIP o en texto plano. El flujo lee el algoritmo de compresión de la respuesta y descomprime solo cuando hace falta."
+[[projects.challenges]]
+title = "Cuatro marketplaces, un solo flujo"
+text = "En vez de duplicar flujos por país, cada marketplace se parametriza (ID, plantilla, destino) y un switch enruta el procesado. Añadir un país nuevo es configuración, no código."
+
+[projects.snippet]
+lang = "python"
+title = "spapi_reports.py"
+code = '''
+import gzip
+import time
+
+import requests
+
+SP_API = "https://sellingpartnerapi-eu.amazon.com"
+
+
+def lwa_token(client_id: str, client_secret: str, refresh_token: str) -> str:
+    r = requests.post("https://api.amazon.com/auth/o2/token", data={
+        "grant_type": "refresh_token",
+        "refresh_token": refresh_token,
+        "client_id": client_id,
+        "client_secret": client_secret,
+    }, timeout=30)
+    r.raise_for_status()
+    return r.json()["access_token"]
+
+
+def download_report(token: str, report_type: str, marketplace_id: str) -> str:
+    h = {"x-amz-access-token": token}
+    report_id = requests.post(f"{SP_API}/reports/2021-06-30/reports", headers=h, json={
+        "reportType": report_type,
+        "marketplaceIds": [marketplace_id],
+    }, timeout=30).json()["reportId"]
+
+    for wait in (15, 30, 60, 60, 120, 120, 300):  # backoff progresivo
+        time.sleep(wait)
+        rep = requests.get(f"{SP_API}/reports/2021-06-30/reports/{report_id}",
+                           headers=h, timeout=30).json()
+        if rep["processingStatus"] == "DONE":
+            break
+        if rep["processingStatus"] in ("FATAL", "CANCELLED"):
+            raise RuntimeError(f"{report_type} [{marketplace_id}]: {rep['processingStatus']}")
+    else:
+        raise TimeoutError(f"El reporte {report_id} no ha terminado a tiempo")
+
+    doc = requests.get(f"{SP_API}/reports/2021-06-30/documents/{rep['reportDocumentId']}",
+                       headers=h, timeout=30).json()
+    raw = requests.get(doc["url"], timeout=120).content
+    if doc.get("compressionAlgorithm") == "GZIP":
+        raw = gzip.decompress(raw)
+    return raw.decode("utf-8", errors="replace")
+'''
+
+
+# =============================================================================
+#  2 · Migración PrestaShop a Docker
+# =============================================================================
+[[projects]]
+slug = "migracion-prestashop-docker"
+title = "Migración de PrestaShop a contenedores en VPS propio"
+kicker = "VapoSelección · Infraestructura"
+category = "infra"
+filters = ["infra", "ecommerce"]
+status = "En producción"
+period = "2025 – 2026"
+role = "Diseño y ejecución completa de la migración"
+context = "Tienda principal + ecosistema de automatización"
+summary = "De un hosting compartido con Plesk a un VPS Ubuntu con Docker Compose, Traefik y HTTPS automático. PrestaShop 1.7 multi-tienda, n8n y microservicios bajo un mismo stack reproducible."
+tagline = "Llevar la tienda principal y todo el ecosistema de automatización a una infraestructura propia, reproducible y bajo control."
+tags = ["Docker", "Docker Compose", "Traefik", "PrestaShop 1.7", "PHP 7.4", "MariaDB", "Ubuntu 22.04"]
+confidential = true
+problem = """
+La tienda corría en un hosting compartido gestionado con Plesk: recursos limitados y compartidos con otros clientes, sin control sobre la versión de PHP ni sobre el servidor, y sin un lugar donde desplegar las herramientas propias que la empresa empezaba a necesitar (n8n, microservicios, ERP).
+
+Cada pieza nueva acababa siendo un servicio externo más o un parche sobre el hosting.
+"""
+solution = """
+Diseñé una plataforma sobre un **VPS Ubuntu 22.04** (12 vCPU, 24 GB de RAM y 720 GB NVMe) donde cada servicio vive en su contenedor y se define en **Docker Compose**. **Traefik** actúa como reverse proxy único: enruta por dominio y emite y renueva los certificados TLS de forma automática.
+
+Migré **PrestaShop 1.7.8 multi-tienda** con su base de datos **MariaDB**, ficheros e imágenes, manteniendo **PHP 7.4** en una imagen fijada para no romper módulos, y dejé n8n y los microservicios en el mismo stack con redes internas separadas: la base de datos nunca queda expuesta a Internet.
+"""
+learnings = """
+Una migración es sobre todo inventario: listar antes de mover nada las dependencias ocultas (tareas cron, envío de emails SMTP, rutas absolutas, módulos que escriben en disco, dominios guardados en base de datos) evita la mayoría de sorpresas el día del cambio.
+"""
+results = [
+  "Control total del servidor: versiones, recursos, despliegues y logs.",
+  "Una sola plataforma para la tienda, las automatizaciones y los microservicios.",
+  "Certificados HTTPS y enrutado por dominio sin intervención manual.",
+  "Base preparada para desplegar nuevos servicios internos en minutos.",
+]
+
+[[projects.kpis]]
+value = "12 vCPU · 24 GB"
+label = "VPS propio con 720 GB NVMe frente a un hosting compartido"
+[[projects.kpis]]
+value = "PHP 7.4"
+label = "fijado en imagen para garantizar compatibilidad con PrestaShop 1.7.8"
+[[projects.kpis]]
+value = "HTTPS auto"
+label = "certificados Let's Encrypt emitidos y renovados por Traefik"
+
+[[projects.flow]]
+title = "Internet"
+text = "Tráfico HTTPS a la tienda y a las herramientas internas"
+[[projects.flow]]
+title = "Traefik"
+text = "Reverse proxy, TLS automático y enrutado por labels"
+[[projects.flow]]
+title = "PrestaShop"
+text = "PHP 7.4 en contenedor, multi-tienda"
+[[projects.flow]]
+title = "MariaDB"
+text = "Red interna, sin puertos publicados"
+[[projects.flow]]
+title = "Servicios"
+text = "n8n y microservicios FastAPI en el mismo stack"
+
+[[projects.features]]
+title = "Infraestructura como código"
+text = "Todo el stack descrito en `docker-compose.yml`: levantar el entorno en otra máquina es clonar, configurar el `.env` y arrancar."
+[[projects.features]]
+title = "TLS sin mantenimiento"
+text = "Certificados emitidos y renovados por Traefik. Publicar un subdominio nuevo es añadir un par de labels al servicio."
+[[projects.features]]
+title = "Aislamiento por redes"
+text = "La base de datos solo es accesible desde la red interna de la aplicación; únicamente Traefik publica puertos al exterior."
+[[projects.features]]
+title = "Versiones fijadas"
+text = "PHP 7.4 con las extensiones que necesita PrestaShop (gd, intl, zip, pdo_mysql, opcache) definido en la imagen."
+[[projects.features]]
+title = "Datos persistentes"
+text = "Imágenes de producto, módulos, temas y datos de MariaDB en volúmenes, independientes del ciclo de vida de los contenedores."
+[[projects.features]]
+title = "Operación en producción"
+text = "Monitorización básica, logs por contenedor y resolución de incidencias sobre el propio servidor."
+
+[[projects.stack]]
+name = "Ubuntu 22.04 LTS"
+why = "Base estable y con soporte largo para el host."
+[[projects.stack]]
+name = "Docker + Compose"
+why = "Entornos reproducibles, despliegues predecibles y servicios aislados."
+[[projects.stack]]
+name = "Traefik"
+why = "Reverse proxy con descubrimiento automático de servicios y certificados ACME."
+[[projects.stack]]
+name = "MariaDB"
+why = "Compatible con el dump original y con buen rendimiento en consultas multi-tienda."
+[[projects.stack]]
+name = "PrestaShop 1.7.8 / PHP 7.4"
+why = "Mantener la versión evitó tener que migrar módulos en paralelo a la infraestructura."
+
+[[projects.challenges]]
+title = "Multi-tienda y dominios"
+text = "PrestaShop guarda los dominios de cada tienda en base de datos (`ps_shop_url` y configuración). Tras importar el dump hay que ajustar dominios y rutas, y regenerar la caché para que cada tienda resuelva bien detrás del proxy."
+[[projects.challenges]]
+title = "HTTPS detrás de un reverse proxy"
+text = "Con Traefik terminando TLS, PrestaShop recibe tráfico HTTP interno. Hay que respetar las cabeceras `X-Forwarded-Proto` para evitar bucles de redirección y contenido mixto."
+[[projects.challenges]]
+title = "Corte con la mínima parada"
+text = "Sincronización previa de ficheros con rsync, TTL de DNS reducido con antelación y, en la ventana de cambio, último volcado de la base de datos más el delta de ficheros."
+[[projects.challenges]]
+title = "Permisos y cachés"
+text = "Propietarios correctos (`www-data`) en `var/cache`, `img`, `upload` y módulos, y limpieza de las cachés de Smarty y Symfony al cambiar de entorno."
+
+[projects.snippet]
+lang = "yaml"
+title = "docker-compose.yml (extracto)"
+code = '''
+services:
+  traefik:
+    image: traefik:v3.1
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.le.acme.tlschallenge=true
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+    ports: ["80:80", "443:443"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+    networks: [proxy]
+
+  prestashop:
+    build: ./prestashop            # php:7.4-apache + gd, intl, zip, pdo_mysql, opcache
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./shop:/var/www/html
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.shop.rule=Host(`${SHOP_DOMAIN}`)
+      - traefik.http.routers.shop.entrypoints=websecure
+      - traefik.http.routers.shop.tls.certresolver=le
+    networks: [proxy, backend]
+
+  mariadb:
+    image: mariadb:10.6
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - db_data:/var/lib/mysql
+    networks: [backend]            # sin puertos publicados
+
+networks:
+  proxy:
+    name: proxy
+  backend:
+    internal: true
+
+volumes:
+  db_data:
+'''
+
+
+# =============================================================================
+#  3 · Dashboard
+# =============================================================================
+[[projects]]
+slug = "dashboard-ventas-almacen"
+title = "Dashboard de ventas, márgenes y rotación de almacén"
+kicker = "VapoSelección · Datos"
+category = "datos"
+filters = ["datos", "ecommerce"]
+status = "En producción"
+period = "2026"
+role = "Diseño y desarrollo completo"
+context = "Tienda online + 3 tiendas físicas"
+summary = "Panel interno en PHP + SQL que unifica ventas por país y canal, margen bruto real y rotación del stock de 3 almacenes valorado a coste desde Odoo. También disponible como API JSON."
+tagline = "Una única fuente de verdad para responder «¿cómo vamos?»: ventas, margen real y qué stock está parado, por tienda y por almacén."
+tags = ["PHP", "SQL avanzado", "MariaDB", "Odoo API", "n8n", "JavaScript"]
+confidential = true
+problem = """
+Las cifras de negocio estaban repartidas: ventas online en PrestaShop, ventas de tienda física en otro sistema, costes en el ERP y Amazon por separado.
+
+Responder preguntas sencillas — cuánto vendimos la semana pasada por país, qué margen real dejó cada tienda o cuánto dinero hay inmovilizado en stock que no rota — exigía exportar y cruzar hojas de cálculo cada vez.
+"""
+solution = """
+Desarrollé un dashboard interno en **PHP** con consultas **SQL** optimizadas sobre la base de datos multi-tienda de PrestaShop y datos de coste obtenidos de **Odoo**. Tiene dos paneles: **ventas** (por país, canal y periodo) y **almacén** (rotación del stock por días sin venta, valorado a precio de coste).
+
+Después lo convertí en una **API**: un flujo de n8n llama a los scripts con token, extrae los valores y devuelve JSON limpio para que otras automatizaciones y asistentes de IA puedan usar los mismos KPIs.
+"""
+learnings = """
+Un dashboard vale tanto como la confianza en sus números. Marcar explícitamente cuándo un dato está incompleto (por ejemplo, si el ERP no ha respondido) es más importante que cualquier gráfico.
+"""
+results = [
+  "Dirección consulta ventas, margen y stock parado sin pedir exportaciones.",
+  "El dinero inmovilizado en stock que no rota es visible y se puede priorizar.",
+  "Los mismos KPIs alimentan informes automáticos y asistentes de IA a través de la API.",
+]
+
+[[projects.kpis]]
+value = "5 vistas"
+label = "tienda online, Medina Azahara, Arcángel, Pozoblanco y global"
+[[projects.kpis]]
+value = "4 tramos"
+label = "de rotación: vivo, lento, frío y muerto"
+[[projects.kpis]]
+value = "API JSON"
+label = "los KPIs disponibles para automatizaciones e IA"
+
+[[projects.flow]]
+title = "PrestaShop"
+text = "Pedidos, clientes y productos multi-tienda en MariaDB"
+[[projects.flow]]
+title = "Odoo"
+text = "Precio de coste y stock por almacén"
+[[projects.flow]]
+title = "Motor PHP"
+text = "Consultas SQL agregadas por tienda, país y periodo"
+[[projects.flow]]
+title = "Dashboard"
+text = "Paneles de ventas y de almacén"
+[[projects.flow]]
+title = "API"
+text = "n8n expone los KPIs en JSON"
+
+[[projects.features]]
+title = "Ventas por país y canal"
+text = "Ventas totales con desglose España, Alemania, Portugal y resto; número de pedidos, clientes nuevos y ticket medio con y sin IVA."
+[[projects.features]]
+title = "Margen bruto real"
+text = "Calculado sobre el coste real de cada producto vendido, no sobre un porcentaje estimado, por tienda y rango de fechas."
+[[projects.features]]
+title = "Rotación de almacén"
+text = "Stock clasificado por días sin venta — vivo (0–90), lento (91–120), frío (121–180) y muerto (más de 180) — con su valor a coste."
+[[projects.features]]
+title = "Lógica de almacén central"
+text = "En el almacén central cuenta la última venta en cualquier canal (tiendas, web y Amazon); en cada tienda, solo sus propias ventas."
+[[projects.features]]
+title = "Top de stock parado"
+text = "Ranking de productos fríos y muertos por valor inmovilizado para priorizar liquidaciones y traspasos entre tiendas."
+[[projects.features]]
+title = "Extracción resiliente"
+text = "La API lee los valores por id de elemento y por pares etiqueta/valor, así que sigue funcionando aunque cambie el diseño del panel."
+
+[[projects.stack]]
+name = "PHP"
+why = "Acceso directo a la base de datos de PrestaShop sin capas intermedias."
+[[projects.stack]]
+name = "SQL avanzado"
+why = "Agregaciones multi-tienda con JOINs y subconsultas optimizadas sobre MariaDB."
+[[projects.stack]]
+name = "Odoo API"
+why = "Coste estándar y stock por almacén desde el ERP."
+[[projects.stack]]
+name = "n8n"
+why = "Capa de API: validación de parámetros, autenticación por token y respuesta JSON."
+[[projects.stack]]
+name = "JavaScript"
+why = "Selectores de tienda y periodo en el panel."
+
+[[projects.challenges]]
+title = "Coste y stock fuera de PrestaShop"
+text = "El valor del stock se calcula a precio de coste del ERP. Si Odoo no responde, el panel lo indica con un indicador explícito en lugar de mostrar cifras incompletas como si fueran correctas."
+[[projects.challenges]]
+title = "La consulta más pesada del sistema"
+text = "Los días sin venta del almacén central cruzan todos los canales y todo el catálogo. Separé el panel de almacén del de ventas para que cada consulta sea independiente y limité el detalle al top 20 por valor."
+[[projects.challenges]]
+title = "Parámetros consistentes"
+text = "Los scripts históricos usaban nombres distintos (`start`/`end` frente a `inicio`/`fin`). La capa de API normaliza alias, valida fechas y rangos y devuelve errores claros con un ejemplo de uso."
+
+[projects.snippet]
+lang = "sql"
+title = "rotacion_almacen.sql (simplificado)"
+code = '''
+-- Días desde la última venta de cada producto y tramo de rotación.
+-- :shops se expande a la lista de id_shop que cuentan para ese almacén.
+SELECT
+  p.id_product,
+  pl.name,
+  DATEDIFF(CURDATE(), MAX(o.date_add)) AS dias_sin_venta,
+  CASE
+    WHEN MAX(o.date_add) IS NULL                      THEN 'sin_venta'
+    WHEN DATEDIFF(CURDATE(), MAX(o.date_add)) <= 90  THEN 'vivo'
+    WHEN DATEDIFF(CURDATE(), MAX(o.date_add)) <= 120 THEN 'lento'
+    WHEN DATEDIFF(CURDATE(), MAX(o.date_add)) <= 180 THEN 'frio'
+    ELSE 'muerto'
+  END AS tramo
+FROM ps_product p
+JOIN ps_product_lang pl
+  ON pl.id_product = p.id_product
+ AND pl.id_lang = :id_lang
+ AND pl.id_shop = :id_shop
+LEFT JOIN ps_order_detail od
+  ON od.product_id = p.id_product
+LEFT JOIN ps_orders o
+  ON o.id_order = od.id_order
+ AND o.valid = 1
+ AND o.id_shop IN (:shops)
+WHERE p.active = 1
+GROUP BY p.id_product, pl.name;
+'''
+
+
+# =============================================================================
+#  4 · Traductor IA
+# =============================================================================
+[[projects]]
+slug = "traductor-catalogo-ia"
+title = "Traductor de catálogo con IA"
+kicker = "VapoSelección · IA"
+category = "ia"
+filters = ["ia", "ecommerce", "automatizacion"]
+status = "Herramienta interna"
+period = "2026"
+role = "Diseño y desarrollo completo"
+context = "Catálogo multi-idioma · mercados europeos"
+summary = "Traducción automática de fichas de producto con LLMs: respeta el HTML, aplica un glosario del sector, valida el resultado y solo retraduce lo que ha cambiado."
+tagline = "Fichas de producto en varios idiomas con calidad de catálogo, sin copiar y pegar en un traductor."
+tags = ["Python", "LLM API", "Prompt engineering", "PrestaShop", "SQL"]
+confidential = true
+problem = """
+Vender en Francia, Alemania e Italia exige fichas de producto en el idioma del cliente. Traducir a mano cientos de descripciones no escala.
+
+Los traductores automáticos genéricos tampoco servían: rompían el HTML de las fichas, traducían marcas o términos técnicos del sector que deben quedarse como están y no mantenían un tono consistente entre productos.
+"""
+solution = """
+Desarrollé una herramienta en **Python** que lee los textos de producto de **PrestaShop**, los envía a un **LLM** con instrucciones específicas del dominio y escribe las traducciones en el idioma de destino.
+
+El prompt fija el tono, prohíbe tocar etiquetas HTML, marcas y unidades, e incluye un **glosario del sector**. Cada respuesta se **valida** antes de guardarse y un **hash del texto de origen** evita volver a traducir (y pagar) lo que no ha cambiado.
+"""
+learnings = """
+Con LLMs, la calidad sale de las restricciones: un buen glosario, instrucciones precisas y validaciones automáticas después de cada llamada importan más que el modelo elegido.
+"""
+results = [
+  "Fichas listas para nuevos mercados sin trabajo manual de traducción.",
+  "Terminología consistente entre idiomas y canales de venta.",
+  "Coste de API controlado gracias al procesado incremental.",
+]
+
+[[projects.kpis]]
+value = "FR · DE · IT"
+label = "idiomas objetivo de los marketplaces europeos"
+[[projects.kpis]]
+value = "HTML intacto"
+label = "estructura de etiquetas validada en cada traducción"
+[[projects.kpis]]
+value = "Incremental"
+label = "solo se retraduce el texto que ha cambiado (hash de origen)"
+
+[[projects.flow]]
+title = "Catálogo"
+text = "Nombre, resúmenes, descripciones y metadatos SEO del idioma origen"
+[[projects.flow]]
+title = "Preparación"
+text = "Detección de cambios por hash y troceado de textos largos"
+[[projects.flow]]
+title = "LLM"
+text = "Traducción con glosario, tono de marca y HTML intacto"
+[[projects.flow]]
+title = "Validación"
+text = "Etiquetas HTML, cifras, unidades y longitud de campos SEO"
+[[projects.flow]]
+title = "Publicación"
+text = "Escritura en el idioma destino o exportación para revisión"
+
+[[projects.features]]
+title = "Glosario del sector"
+text = "Marcas, modelos, términos técnicos (resistencias, mesh, sales de nicotina, pods) y unidades se mantienen o se traducen según reglas fijas."
+[[projects.features]]
+title = "HTML intacto"
+text = "Se comprueba que la traducción conserva exactamente la misma estructura de etiquetas que el original; si no, el texto vuelve a la cola."
+[[projects.features]]
+title = "SEO por idioma"
+text = "Meta título y meta descripción traducidos respetando los límites de longitud de cada campo."
+[[projects.features]]
+title = "Incremental"
+text = "Solo se traducen productos nuevos o modificados gracias a un hash del contenido de origen."
+[[projects.features]]
+title = "Modo revisión"
+text = "Ejecución en seco que genera un Excel con original y traducción para revisarlo antes de publicar."
+[[projects.features]]
+title = "Por lotes"
+text = "Procesado por lotes con reintentos y control de los límites de la API."
+
+[[projects.stack]]
+name = "Python"
+why = "Orquestación, validaciones y acceso a datos."
+[[projects.stack]]
+name = "API de LLM"
+why = "Traducción contextual de más calidad que un traductor clásico en textos comerciales."
+[[projects.stack]]
+name = "Prompt engineering"
+why = "Instrucciones de sistema con glosario, tono y restricciones de formato."
+[[projects.stack]]
+name = "PrestaShop · MariaDB"
+why = "Lectura y escritura directa de las tablas de idioma del catálogo."
+
+[[projects.challenges]]
+title = "Que el modelo no «mejore» el texto"
+text = "Un LLM puede añadir características que el producto no tiene. El prompt prohíbe añadir o quitar información y la validación compara cifras y unidades entre original y traducción."
+[[projects.challenges]]
+title = "No romper el HTML"
+text = "Las descripciones tienen listas, tablas y estilos en línea. Se comparan las etiquetas del original y de la traducción; si no coinciden, se reintenta."
+[[projects.challenges]]
+title = "Coste y tiempo"
+text = "Con el hash de origen y el procesado por lotes, una actualización de catálogo solo traduce lo que ha cambiado."
+
+[projects.snippet]
+lang = "python"
+title = "translator.py (simplificado)"
+code = '''
+import hashlib
+import re
+
+TAG = re.compile(r"</?([a-z0-9]+)[^>]*>", re.I)
+NUM = re.compile(r"\d+(?:[.,]\d+)?")
+
+SYSTEM = """Eres traductor profesional de fichas de producto de e-commerce.
+Traduce del español al {lang}. Reglas:
+- No traduzcas marcas, modelos ni unidades (ml, mg, W, Ω, mAh).
+- Conserva EXACTAMENTE las etiquetas HTML y su orden.
+- No añadas ni elimines información.
+- Glosario obligatorio: {glossary}
+Devuelve solo el texto traducido."""
+
+
+def source_hash(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def is_valid(original: str, translated: str) -> bool:
+    same_markup = TAG.findall(original) == TAG.findall(translated)
+    same_numbers = sorted(NUM.findall(original)) == sorted(NUM.findall(translated))
+    return same_markup and same_numbers
+
+
+def translate(llm, text: str, lang: str, glossary: dict[str, str], retries: int = 2) -> str:
+    rules = "; ".join(f"{src} → {dst}" for src, dst in glossary.items())
+    system = SYSTEM.format(lang=lang, glossary=rules)
+    for _ in range(retries + 1):
+        out = llm(system=system, user=text)
+        if is_valid(text, out):
+            return out
+    raise ValueError("La traducción no supera la validación (HTML o cifras)")
+'''
+
+
+# =============================================================================
+#  5 · Asistente IA / MCP
+# =============================================================================
+[[projects]]
+slug = "asistente-ia-mcp"
+title = "Asistente de IA conectado a los datos del negocio"
+kicker = "VapoSelección · IA"
+category = "ia"
+filters = ["ia", "automatizacion", "datos"]
+status = "En producción"
+period = "2026"
+role = "Arquitectura y desarrollo"
+context = "Ventas, stock, Amazon, ERP y analítica web"
+summary = "Herramientas para LLMs mediante Model Context Protocol (MCP): ventas, márgenes, stock, pedidos de Amazon, Odoo y analítica web consultables en lenguaje natural con datos reales."
+tagline = "Preguntar «¿qué tal fue la semana pasada en cada tienda?» y obtener la respuesta con datos reales, no con una estimación."
+tags = ["MCP", "n8n", "JavaScript", "Webhooks", "Amazon SP-API", "Odoo", "Microsoft Clarity"]
+confidential = true
+problem = """
+La información para tomar decisiones estaba en muchos sistemas distintos y cada consulta requería saber dónde mirar, exportar y cruzar datos.
+
+Los asistentes de IA ya eran útiles para redactar o programar, pero no conocían los datos reales de la empresa, así que sus respuestas sobre el negocio eran genéricas.
+"""
+solution = """
+Construí una capa de herramientas que los asistentes de IA pueden usar mediante **Model Context Protocol (MCP)**. Los scripts internos de ventas, margen, almacén y pedidos se exponen como workflows de **n8n** con entrada validada y salida JSON.
+
+Se combinan con conectores MCP para **Amazon SP-API** (pedidos, inventario FBA, devoluciones, ofertas y reportes), **Odoo** (stock, facturas y ventas) y analítica web. El asistente decide qué herramienta usar, con qué parámetros, y responde con cifras reales.
+"""
+learnings = """
+Integrar IA en una empresa no va de elegir el modelo, va de diseñar buenas herramientas: contratos claros, descripciones precisas, validación estricta y errores que expliquen cómo corregirse.
+"""
+results = [
+  "Preguntas de negocio respondidas en segundos con datos reales.",
+  "Análisis que antes requerían exportaciones manuales, ahora en una conversación.",
+  "Base reutilizable: cada script interno nuevo se convierte en herramienta en minutos.",
+]
+
+[[projects.kpis]]
+value = "MCP"
+label = "protocolo estándar para dar herramientas a los LLMs"
+[[projects.kpis]]
+value = "6 fuentes"
+label = "PrestaShop, Amazon, Odoo, GA4, Search Console y Clarity"
+[[projects.kpis]]
+value = "Solo lectura"
+label = "el modelo nunca accede directamente a las bases de datos"
+
+[[projects.flow]]
+title = "Pregunta"
+text = "Consulta en lenguaje natural del equipo"
+[[projects.flow]]
+title = "LLM + MCP"
+text = "El asistente elige herramienta y parámetros"
+[[projects.flow]]
+title = "Herramientas"
+text = "Workflows n8n y conectores Amazon, Odoo y analítica"
+[[projects.flow]]
+title = "Validación"
+text = "Normalización de tiendas, fechas y rangos con errores explicativos"
+[[projects.flow]]
+title = "Respuesta"
+text = "JSON con valores en texto y numéricos"
+
+[[projects.features]]
+title = "Ventas y margen por tienda"
+text = "Ventas por país, ticket medio, clientes nuevos y margen bruto real por tienda y periodo."
+[[projects.features]]
+title = "Rotación de almacén"
+text = "Stock vivo, lento, frío y muerto valorado a coste en cada almacén."
+[[projects.features]]
+title = "Amazon"
+text = "Pedidos, inventario FBA, devoluciones, ofertas y reportes de SP-API en los cuatro marketplaces."
+[[projects.features]]
+title = "ERP"
+text = "Consultas de stock, facturas abiertas y resúmenes de venta en Odoo."
+[[projects.features]]
+title = "Histórico de Clarity"
+text = "La API de Microsoft Clarity solo devuelve los últimos días; un flujo guarda una foto diaria para construir un histórico consultable."
+[[projects.features]]
+title = "Motor común"
+text = "Un sub-workflow interno centraliza la autenticación por token y la extracción de datos; cada herramienta solo define sus parámetros."
+
+[[projects.stack]]
+name = "Model Context Protocol"
+why = "Estándar abierto para exponer herramientas a LLMs de forma segura y autodescrita."
+[[projects.stack]]
+name = "n8n"
+why = "Webhooks, validación y sub-workflows reutilizables sin desplegar servicios nuevos."
+[[projects.stack]]
+name = "JavaScript"
+why = "Nodos de código para normalizar parámetros y extraer datos de forma robusta."
+[[projects.stack]]
+name = "Amazon SP-API · Odoo"
+why = "Las fuentes de datos operativas del negocio."
+[[projects.stack]]
+name = "GA4 · Search Console · Clarity"
+why = "Tráfico, posicionamiento y comportamiento de usuarios en la web."
+
+[[projects.challenges]]
+title = "Herramientas que un LLM use bien"
+text = "Cada herramienta tiene una descripción precisa (qué hace, parámetros, unidades y limitaciones), porque es lo que el modelo lee para decidir. Los errores incluyen un ejemplo de llamada correcta para que el asistente se corrija solo."
+[[projects.challenges]]
+title = "Parámetros flexibles, datos estrictos"
+text = "Se aceptan alias (`start`/`inicio`, `shop`/`tienda`) y se normalizan tildes y mayúsculas, pero fechas, rangos e ids se validan con mensajes claros."
+[[projects.challenges]]
+title = "Seguridad"
+text = "Los scripts internos solo aceptan peticiones autenticadas con token desde n8n y el modelo solo accede a consultas acotadas de lectura, nunca a la base de datos."
+
+[projects.snippet]
+lang = "javascript"
+title = "n8n · nodo «Normalizar parámetros»"
+code = '''
+// Acepta parámetros del webhook (query/body) o de otro workflow.
+const src = $input.first().json ?? {};
+const q = { ...(src.query ?? {}), ...(src.body ?? {}) };
+
+const pick = (...keys) => {
+  for (const k of keys) for (const o of [q, src]) {
+    const v = o?.[k];
+    if (v !== undefined && v !== null && String(v).trim() !== '') return String(v).trim();
+  }
+  return null;
+};
+
+const shop  = pick('shop', 'id_shop', 'tienda');
+const start = pick('start', 'inicio', 'fecha_inicio');
+const end   = pick('end', 'fin', 'fecha_fin');
+
+const example = '{"shop": "1", "start": "2026-08-11", "end": "2026-08-17"}';
+const isDate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(s ?? '');
+
+if (!/^\d+$/.test(shop ?? '')) throw new Error(`shop debe ser el id numérico de la tienda. Ejemplo: ${example}`);
+if (!isDate(start) || !isDate(end)) throw new Error(`start y end deben ir en formato YYYY-MM-DD. Ejemplo: ${example}`);
+if (end < start) throw new Error(`Rango invertido: start (${start}) es posterior a end (${end})`);
+
+return [{ json: { shop, start, end } }];
+'''
+
+
+# =============================================================================
+#  6 · n8n + FastAPI
+# =============================================================================
+[[projects]]
+slug = "plataforma-automatizacion-n8n"
+title = "Plataforma de automatización con n8n y microservicios FastAPI"
+kicker = "VapoSelección · Automatización"
+category = "automatizacion"
+filters = ["automatizacion", "infra"]
+status = "En producción"
+period = "2025 – actualidad"
+role = "Arquitectura, desarrollo y operación"
+context = "Operaciones internas de toda la empresa"
+summary = "n8n autoalojado en Docker como columna vertebral de la operativa: más de 10 workflows en producción, formularios internos para el equipo y microservicios FastAPI detrás de Traefik para el procesado pesado de datos."
+tagline = "Que las tareas repetitivas dejen de depender de alguien: formularios, cron, webhooks y servicios propios trabajando juntos."
+tags = ["n8n", "FastAPI", "Python", "Pandas", "Docker", "Traefik", "Google Workspace"]
+confidential = true
+problem = """
+Muchas tareas del día a día eran manuales y repetitivas: limpiar ficheros de proveedores, generar plantillas, mover datos entre Amazon, hojas de cálculo y email, enviar informes.
+
+Las herramientas SaaS de automatización se quedaban cortas (o resultaban caras) en cuanto había que procesar ficheros grandes o aplicar lógica de negocio específica.
+"""
+solution = """
+Desplegué **n8n autoalojado** en Docker como orquestador central y lo complementé con **microservicios FastAPI** propios, publicados detrás de **Traefik**, para todo lo que no debe hacerse en nodos visuales: limpieza de Excel, generación de ficheros y transformaciones con Pandas.
+
+Reparto de responsabilidades claro: n8n se encarga de disparadores, integraciones, reintentos y notificaciones; Python, del cálculo.
+"""
+learnings = """
+Una automatización solo ahorra tiempo si es fiable. Invertir en ramas de error y notificaciones claras es lo que consigue que el equipo confíe en ella y deje de comprobar a mano lo que ya hace la máquina.
+"""
+results = [
+  "Procesos que antes eran manuales se lanzan desde un formulario o se ejecutan solos.",
+  "Errores detectados y notificados al momento, no descubiertos días después.",
+  "Nuevas automatizaciones en horas reutilizando sub-workflows y servicios existentes.",
+]
+
+[[projects.kpis]]
+value = "+10"
+label = "workflows activos en producción"
+[[projects.kpis]]
+value = "3 disparadores"
+label = "cron, formularios internos y webhooks"
+[[projects.kpis]]
+value = "FastAPI"
+label = "microservicios propios para el procesado pesado"
+
+[[projects.flow]]
+title = "Disparador"
+text = "Cron, formulario interno o webhook"
+[[projects.flow]]
+title = "n8n"
+text = "Orquestación, ramas de error y sub-workflows reutilizables"
+[[projects.flow]]
+title = "FastAPI"
+text = "Microservicios Python para limpieza y generación de ficheros"
+[[projects.flow]]
+title = "Integraciones"
+text = "Amazon SP-API, Google Sheets / Drive y PrestaShop"
+[[projects.flow]]
+title = "Entrega"
+text = "Email con adjunto, fichero en Drive o respuesta JSON"
+
+[[projects.features]]
+title = "Formularios para el equipo"
+text = "Personas no técnicas lanzan procesos (limpiar un catálogo de proveedor, generar etiquetas o plantillas) desde un formulario y reciben el resultado por email."
+[[projects.features]]
+title = "Microservicios de datos"
+text = "Servicios FastAPI con Pandas para limpiar y normalizar XLSX de proveedores y generar ficheros para Amazon."
+[[projects.features]]
+title = "Errores con contexto"
+text = "Cada workflow tiene ramas de error que envían un email explicando qué ha fallado y qué hacer."
+[[projects.features]]
+title = "Sub-workflows reutilizables"
+text = "Autenticación, motores HTTP y cálculos de margen compartidos entre flujos."
+[[projects.features]]
+title = "Pruebas sin riesgo"
+text = "Destinos separados de pruebas y producción para validar cambios sin enviar emails reales al equipo."
+[[projects.features]]
+title = "Autoalojado"
+text = "Sin límites de ejecuciones por plan y con los datos dentro de la infraestructura propia."
+
+[[projects.stack]]
+name = "n8n"
+why = "Orquestador visual autoalojado, con código cuando hace falta."
+[[projects.stack]]
+name = "FastAPI"
+why = "APIs Python rápidas, tipadas y con documentación OpenAPI automática."
+[[projects.stack]]
+name = "Pandas · openpyxl"
+why = "Lectura, limpieza y escritura de Excel."
+[[projects.stack]]
+name = "Traefik"
+why = "Exposición de los servicios con TLS y enrutado por dominio."
+[[projects.stack]]
+name = "Google Sheets · Drive"
+why = "Donde el equipo ya trabaja a diario."
+
+[[projects.challenges]]
+title = "Ficheros de proveedor caóticos"
+text = "Cada proveedor envía Excel con cabeceras, formatos y filas basura distintos. El microservicio detecta la fila de cabecera, normaliza columnas y descarta filas vacías antes de devolver un fichero limpio."
+[[projects.challenges]]
+title = "Binarios entre servicios"
+text = "Los ficheros se mueven entre n8n, disco y microservicios usando un directorio de trabajo por fecha y lectura/escritura explícita, evitando cargar ficheros grandes en memoria del orquestador."
+[[projects.challenges]]
+title = "Saber cuándo escribir código"
+text = "Regla práctica: integraciones y flujo en n8n; transformaciones de datos no triviales en Python, versionadas y testeables."
+
+[projects.snippet]
+lang = "python"
+title = "xlsx_cleaner/main.py (simplificado)"
+code = '''
+from io import BytesIO
+
+import pandas as pd
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.responses import StreamingResponse
+
+app = FastAPI(title="xlsx-cleaner")
+REQUIRED = {"referencia", "descripcion", "precio"}
+XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+
+def find_header_row(df: pd.DataFrame) -> int:
+    for i, row in df.head(30).iterrows():
+        values = {str(v).strip().lower() for v in row.dropna()}
+        if REQUIRED <= values:
+            return i
+    raise HTTPException(422, f"No se encuentran las columnas {sorted(REQUIRED)}")
+
+
+@app.post("/clean")
+async def clean(file: UploadFile = File(...)):
+    raw = pd.read_excel(BytesIO(await file.read()), header=None, dtype=str)
+    header = find_header_row(raw)
+    columns = raw.iloc[header].fillna("").str.strip().str.lower()
+    df = raw.iloc[header + 1:].set_axis(columns, axis=1)
+    df = df.dropna(how="all").drop_duplicates(subset="referencia")
+    df["precio"] = pd.to_numeric(df["precio"].str.replace(",", "."), errors="coerce")
+
+    out = BytesIO()
+    df.to_excel(out, index=False)
+    out.seek(0)
+    return StreamingResponse(out, media_type=XLSX,
+                             headers={"Content-Disposition": "attachment; filename=clean.xlsx"})
+'''
+
+
+# =============================================================================
+#  7 · PrestaShop
+# =============================================================================
+[[projects]]
+slug = "reestructuracion-prestashop"
+title = "Reestructuración integral de la tienda PrestaShop"
+kicker = "VapoSelección · Tienda online"
+category = "ecommerce"
+filters = ["ecommerce"]
+status = "En producción"
+period = "2025 – actualidad"
+role = "Desarrollo front y back de la tienda"
+context = "PrestaShop 1.7.8 multi-tienda"
+summary = "Personalización profunda de la plantilla y módulos PHP a medida sobre PrestaShop 1.7 multi-tienda: bloques de top ventas por categoría, componentes corporativos y consultas SQL optimizadas."
+tagline = "Una tienda que destaca lo que más se vende, carga rápido y se puede mantener sin parches."
+tags = ["PHP", "PrestaShop 1.7", "Smarty", "SQL", "MariaDB", "JavaScript", "CSS"]
+confidential = true
+problem = """
+La tienda arrastraba una plantilla con personalizaciones acumuladas y módulos de terceros que no encajaban con la forma de vender de la empresa.
+
+Los productos más vendidos de cada categoría no estaban destacados, había componentes corporativos inconsistentes entre tiendas y algunas operaciones masivas sobre el catálogo eran lentas.
+"""
+solution = """
+Rehice la capa de presentación partiendo de la plantilla base y desarrollé **módulos propios en PHP** siguiendo la arquitectura de PrestaShop: hooks, configuración en el back office y plantillas **Smarty**.
+
+Los bloques de producto se alimentan de consultas **SQL** optimizadas y conscientes de la **multi-tienda**, con caché para no penalizar el tiempo de carga.
+"""
+learnings = """
+En PrestaShop, respetar la arquitectura de la plataforma (hooks, módulos, `DbQuery`) es lo que separa una personalización mantenible de un tema imposible de actualizar.
+"""
+results = [
+  "Los productos más vendidos se destacan automáticamente en cada categoría.",
+  "Componentes corporativos coherentes en todas las tiendas.",
+  "Operaciones masivas de catálogo más rápidas tras optimizar las consultas.",
+]
+
+[[projects.kpis]]
+value = "1.7.8"
+label = "PrestaShop multi-tienda con módulos propios"
+[[projects.kpis]]
+value = "id_shop"
+label = "todas las consultas aisladas por tienda"
+[[projects.kpis]]
+value = "SQL"
+label = "optimizado para operaciones masivas sobre MariaDB"
+
+[[projects.flow]]
+title = "Hooks"
+text = "Puntos de inserción del tema: home, categoría, footer"
+[[projects.flow]]
+title = "Módulo PHP"
+text = "Lógica, configuración en back office y caché"
+[[projects.flow]]
+title = "SQL"
+text = "Consultas multi-tienda optimizadas"
+[[projects.flow]]
+title = "Smarty"
+text = "Plantillas del tema personalizadas"
+[[projects.flow]]
+title = "Tienda"
+text = "Bloques visibles en cada tienda del multi-store"
+
+[[projects.features]]
+title = "Top ventas por categoría"
+text = "Bloque que muestra los productos más vendidos de cada categoría a partir de pedidos válidos, calculado por tienda."
+[[projects.features]]
+title = "Componentes corporativos"
+text = "Footer y bloques institucionales a medida, configurables desde el back office."
+[[projects.features]]
+title = "Analíticas internas"
+text = "Componentes propios para medir el comportamiento de la tienda."
+[[projects.features]]
+title = "Plantilla personalizada"
+text = "Personalización profunda del tema base manteniendo la compatibilidad con actualizaciones."
+[[projects.features]]
+title = "Consultas optimizadas"
+text = "Revisión y optimización de consultas SQL en operaciones masivas de catálogo sobre MariaDB."
+[[projects.features]]
+title = "Multi-tienda real"
+text = "Pedidos, productos y textos filtrados por `id_shop`: cada tienda muestra solo sus propios datos."
+
+[[projects.stack]]
+name = "PHP"
+why = "Módulos nativos de PrestaShop."
+[[projects.stack]]
+name = "Smarty"
+why = "Motor de plantillas del tema."
+[[projects.stack]]
+name = "MariaDB · SQL"
+why = "Consultas con `DbQuery` y agregaciones optimizadas."
+[[projects.stack]]
+name = "JavaScript · CSS"
+why = "Interacción y estilo de los componentes."
+
+[[projects.challenges]]
+title = "Multi-tienda en cada consulta"
+text = "En multi-tienda es fácil mezclar datos entre tiendas. Todas las consultas filtran por `id_shop` en pedidos, `product_shop` y textos por idioma."
+[[projects.challenges]]
+title = "Rendimiento"
+text = "Calcular el top de ventas en cada visita sería caro: el resultado se cachea por tienda y categoría."
+[[projects.challenges]]
+title = "Mantenibilidad"
+text = "La lógica vive en módulos y no en el core, para poder actualizar la plataforma sin perder cambios."
+
+[projects.snippet]
+lang = "php"
+title = "topsellersbycategory.php (extracto)"
+code = '''
+<?php
+class TopSellersByCategory extends Module
+{
+    public function hookDisplayCategoryTop(array $params)
+    {
+        $idShop     = (int) $this->context->shop->id;
+        $idCategory = (int) Tools::getValue('id_category');
+        $cacheId    = 'topsellers_' . $idShop . '_' . $idCategory;
+
+        if (!Cache::isStored($cacheId)) {
+            $sql = new DbQuery();
+            $sql->select('od.product_id, SUM(od.product_quantity) AS qty')
+                ->from('order_detail', 'od')
+                ->innerJoin('orders', 'o', 'o.id_order = od.id_order AND o.valid = 1 AND o.id_shop = ' . $idShop)
+                ->innerJoin('category_product', 'cp', 'cp.id_product = od.product_id AND cp.id_category = ' . $idCategory)
+                ->innerJoin('product_shop', 'ps', 'ps.id_product = od.product_id AND ps.id_shop = ' . $idShop . ' AND ps.active = 1')
+                ->where('o.date_add >= DATE_SUB(NOW(), INTERVAL 90 DAY)')
+                ->groupBy('od.product_id')
+                ->orderBy('qty DESC')
+                ->limit(8);
+
+            Cache::store($cacheId, Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql));
+        }
+
+        $this->context->smarty->assign('top_products', Cache::retrieve($cacheId));
+
+        return $this->display(__FILE__, 'views/templates/hook/topsellers.tpl');
+    }
+}
+'''
+
+
+# =============================================================================
+#  8 · Segmentación de catálogo
+# =============================================================================
+[[projects]]
+slug = "segmentacion-catalogo-pricing"
+title = "Segmentación de catálogo y pricing por margen"
+kicker = "VapoSelección · Pricing"
+category = "datos"
+filters = ["datos", "automatizacion"]
+status = "En producción"
+period = "2025"
+role = "Diseño y desarrollo completo"
+context = "Tarifas de proveedores"
+summary = "Script Python parametrizable que procesa los Excel de proveedores, calcula márgenes y genera Excel segmentados y coloreados por umbrales para decidir precios y qué SKUs priorizar."
+tagline = "De una tarifa de proveedor de miles de filas a una decisión de compra clara en un solo comando."
+tags = ["Python", "Pandas", "openpyxl", "Excel", "CLI"]
+confidential = true
+problem = """
+Las tarifas de proveedor llegan en Excel con miles de referencias y formatos distintos.
+
+Decidir qué productos dejan margen suficiente, a qué precio venderlos y cuáles priorizar se hacía revisando la hoja a mano, con fórmulas copiadas y criterios que cambiaban según quién lo hiciera.
+"""
+solution = """
+Desarrollé un script **Python** parametrizable que lee la tarifa del proveedor, normaliza columnas, cruza con el precio de venta y calcula el **margen de cada SKU**.
+
+El resultado es un **Excel segmentado** por tramos de margen y coloreado con umbrales configurables, para que compras vea de un vistazo qué priorizar. La parte de limpieza de ficheros se expuso también como microservicio para usarla desde n8n.
+"""
+learnings = """
+Un script con buenos valores por defecto y una salida pensada para quien la va a leer (colores, hojas separadas, orden) se usa; uno que obliga a saber Python, no.
+"""
+results = [
+  "Decisiones de pricing con un criterio único y repetible.",
+  "Priorización automática de los SKUs de mayor margen.",
+  "Revisión de una tarifa completa en minutos en lugar de horas.",
+]
+
+[[projects.kpis]]
+value = "Umbrales"
+label = "de margen configurables por parámetro"
+[[projects.kpis]]
+value = "Excel listo"
+label = "segmentado y coloreado para el equipo de compras"
+[[projects.kpis]]
+value = "1 comando"
+label = "de la tarifa del proveedor a la decisión"
+
+[[projects.flow]]
+title = "Tarifa"
+text = "Excel del proveedor tal cual llega"
+[[projects.flow]]
+title = "Normalización"
+text = "Cabeceras, formatos numéricos y referencias"
+[[projects.flow]]
+title = "Cálculo"
+text = "Margen por SKU con costes configurables"
+[[projects.flow]]
+title = "Segmentación"
+text = "Tramos según umbrales de margen"
+[[projects.flow]]
+title = "Excel final"
+text = "Hojas por segmento con colores"
+
+[[projects.features]]
+title = "Parametrizable"
+text = "Umbrales, columnas y costes se pasan como argumentos: el mismo script sirve para distintos proveedores."
+[[projects.features]]
+title = "Coloreado por margen"
+text = "Cada fila se colorea según su tramo para una lectura inmediata."
+[[projects.features]]
+title = "Una hoja por segmento"
+text = "Hojas separadas por tramo de margen para trabajar cada grupo por separado."
+[[projects.features]]
+title = "Priorización"
+text = "Dentro de cada tramo, ordenado por margen para destacar los SKUs más rentables."
+
+[[projects.stack]]
+name = "Python"
+why = "Script de línea de comandos reutilizable."
+[[projects.stack]]
+name = "Pandas"
+why = "Limpieza y cálculo vectorizado sobre miles de filas."
+[[projects.stack]]
+name = "openpyxl"
+why = "Formato y colores en el Excel de salida."
+[[projects.stack]]
+name = "argparse"
+why = "Parámetros sin tocar el código."
+
+[[projects.challenges]]
+title = "Números con formato europeo"
+text = "Comas decimales, símbolos de moneda y celdas de texto se normalizan antes de calcular para no descartar filas en silencio."
+[[projects.challenges]]
+title = "Ficheros heterogéneos"
+text = "Detección de la fila de cabecera y mapeo de nombres de columna por proveedor."
+
+[projects.snippet]
+lang = "python"
+title = "segmentar_tarifa.py (simplificado)"
+code = '''
+import argparse
+
+import pandas as pd
+
+COLORS = {"alto": "#C6EFCE", "medio": "#FFEB9C", "bajo": "#FFC7CE"}
+
+
+def segment(df: pd.DataFrame, low: float, high: float) -> pd.DataFrame:
+    df["margen_pct"] = (df["pvp_sin_iva"] - df["coste"]) / df["pvp_sin_iva"] * 100
+    df["segmento"] = pd.cut(
+        df["margen_pct"],
+        bins=[-float("inf"), low, high, float("inf")],
+        labels=["bajo", "medio", "alto"],
+    )
+    return df.sort_values(["segmento", "margen_pct"], ascending=[False, False])
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description="Segmenta una tarifa de proveedor por margen")
+    ap.add_argument("tarifa")
+    ap.add_argument("--bajo", type=float, default=15, help="margen %% por debajo del cual es bajo")
+    ap.add_argument("--alto", type=float, default=30, help="margen %% a partir del cual es alto")
+    ap.add_argument("-o", "--out", default="tarifa_segmentada.xlsx")
+    args = ap.parse_args()
+
+    df = segment(pd.read_excel(args.tarifa), args.bajo, args.alto)
+    paint = lambda row: [f"background-color: {COLORS[row.segmento]}"] * len(row)
+
+    with pd.ExcelWriter(args.out, engine="openpyxl") as xw:
+        df.style.apply(paint, axis=1).to_excel(xw, sheet_name="todo", index=False)
+        for seg, part in df.groupby("segmento", observed=True):
+            part.style.apply(paint, axis=1).to_excel(xw, sheet_name=str(seg), index=False)
+
+
+if __name__ == "__main__":
+    main()
+'''
+
+
+# =============================================================================
+#  9 · Odoo
+# =============================================================================
+[[projects]]
+slug = "implantacion-odoo-erp"
+title = "Implantación de Odoo ERP y centralización de stock"
+kicker = "VapoSelección · ERP"
+category = "ecommerce"
+filters = ["ecommerce", "datos", "automatizacion"]
+status = "En implantación"
+period = "2026"
+role = "Responsable técnico del proyecto (con partner externo)"
+context = "Web, Amazon y 3 tiendas físicas"
+summary = "Coordinación técnica de la implantación de Odoo con un partner externo para centralizar el stock de web, Amazon y 3 tiendas físicas, eliminar sincronizaciones manuales, unificar la contabilidad y cumplir con Verifactu."
+tagline = "Una sola fuente de verdad para stock, ventas y contabilidad en todos los canales de venta."
+tags = ["Odoo", "ERP", "PrestaShop", "TPV", "Verifactu", "Python", "Integraciones"]
+confidential = true
+problem = """
+El stock de la tienda online, Amazon y las tres tiendas físicas (Pozoblanco, Medina Azahara y Arcángel) se gestionaba en sistemas distintos con sincronizaciones manuales.
+
+Eso provocaba descuadres de inventario, ventas de productos sin existencias y mucho trabajo administrativo, a lo que se sumaba la necesidad de adaptar la facturación a **Verifactu**.
+"""
+solution = """
+Lidero por parte de la empresa la implantación de **Odoo** junto a un partner externo: definición de requisitos, modelo de almacenes (un almacén central y uno por tienda), limpieza y migración de datos maestros, pruebas del **TPV** en tiendas e integración con **PrestaShop**.
+
+En paralelo, el resto del ecosistema ya consume datos de Odoo por API: el dashboard de rotación valora el stock con el coste del ERP y los asistentes de IA consultan stock, facturas y ventas.
+"""
+learnings = """
+En un proyecto de ERP la parte técnica es la sencilla. El reto real es entender cada proceso de negocio, traducirlo a requisitos concretos y acompañar al equipo en el cambio de forma de trabajar.
+"""
+results = [
+  "Base para eliminar las sincronizaciones manuales de stock entre canales.",
+  "Coste real de producto disponible para el cálculo de márgenes y rotación.",
+  "Facturación y contabilidad preparadas para Verifactu.",
+]
+
+[[projects.kpis]]
+value = "4 canales"
+label = "web, Amazon y tiendas físicas sobre un único inventario"
+[[projects.kpis]]
+value = "3 tiendas"
+label = "con TPV de Odoo, una de ellas almacén central"
+[[projects.kpis]]
+value = "Verifactu"
+label = "facturación adaptada a la normativa"
+
+[[projects.flow]]
+title = "PrestaShop"
+text = "Pedidos y catálogo de la tienda online"
+[[projects.flow]]
+title = "Amazon"
+text = "Ventas FBA y FBM en 4 marketplaces"
+[[projects.flow]]
+title = "TPV tiendas"
+text = "Pozoblanco, Medina Azahara y Arcángel"
+[[projects.flow]]
+title = "Odoo"
+text = "Stock, compras, ventas y contabilidad"
+[[projects.flow]]
+title = "Explotación"
+text = "Dashboards, n8n y asistentes de IA vía API"
+
+[[projects.features]]
+title = "Stock centralizado"
+text = "Un único inventario con almacén central y almacenes por tienda."
+[[projects.features]]
+title = "TPV en tiendas"
+text = "Punto de venta de Odoo en las tiendas físicas, con formación al equipo."
+[[projects.features]]
+title = "Contabilidad y Verifactu"
+text = "Facturación y contabilidad preparadas para la normativa Verifactu."
+[[projects.features]]
+title = "Datos maestros"
+text = "Limpieza y migración del catálogo: referencias, costes y proveedores."
+[[projects.features]]
+title = "Integración por API"
+text = "Coste estándar y stock de Odoo consumidos por dashboards y automatizaciones."
+[[projects.features]]
+title = "Conector para IA"
+text = "Consultas de stock, facturas y ventas desde asistentes de IA."
+
+[[projects.stack]]
+name = "Odoo"
+why = "ERP modular: inventario, compras, ventas, TPV y contabilidad."
+[[projects.stack]]
+name = "API externa de Odoo"
+why = "Lectura de stock y costes desde el resto de sistemas."
+[[projects.stack]]
+name = "PrestaShop"
+why = "Canal online integrado con el ERP."
+[[projects.stack]]
+name = "Python · n8n"
+why = "Scripts y flujos de integración y validación de datos."
+
+[[projects.challenges]]
+title = "Calidad de los datos maestros"
+text = "Un ERP es tan bueno como sus datos: referencias duplicadas, costes desactualizados y productos inactivos se depuran antes de migrar."
+[[projects.challenges]]
+title = "Coordinación con el partner"
+text = "Traducir los procesos reales de tienda, almacén y Amazon a requisitos concretos para el partner y validar cada entrega con pruebas."
+[[projects.challenges]]
+title = "Convivencia durante la transición"
+text = "Mientras avanza la implantación, los sistemas actuales siguen funcionando: los nuevos desarrollos leen de Odoo en cuanto el dato está disponible."
+
+[projects.snippet]
+lang = "python"
+title = "odoo_stock.py (simplificado)"
+code = '''
+import os
+import xmlrpc.client
+
+URL = os.environ["ODOO_URL"]
+DB = os.environ["ODOO_DB"]
+USER = os.environ["ODOO_USER"]
+API_KEY = os.environ["ODOO_API_KEY"]
+
+uid = xmlrpc.client.ServerProxy(f"{URL}/xmlrpc/2/common").authenticate(DB, USER, API_KEY, {})
+models = xmlrpc.client.ServerProxy(f"{URL}/xmlrpc/2/object")
+
+
+def stock_by_location(default_code: str) -> dict[str, float]:
+    """Stock disponible (cantidad - reservado) de una referencia por ubicación interna."""
+    quants = models.execute_kw(
+        DB, uid, API_KEY, "stock.quant", "search_read",
+        [[["product_id.default_code", "=", default_code],
+          ["location_id.usage", "=", "internal"]]],
+        {"fields": ["location_id", "quantity", "reserved_quantity"]},
+    )
+    stock: dict[str, float] = {}
+    for q in quants:
+        location = q["location_id"][1]
+        stock[location] = stock.get(location, 0) + q["quantity"] - q["reserved_quantity"]
+    return stock
+'''
+
+
+# =============================================================================
+#  10 · AdvanceBoy (personal)
+# =============================================================================
+[[projects]]
+slug = "advanceboy-emulador-gba"
+title = "AdvanceBoy: emulador de Game Boy Advance para Android"
+kicker = "Proyecto personal · Open source"
+category = "personal"
+filters = ["personal"]
+status = "Open source"
+period = "2026"
+role = "Proyecto personal · desarrollo completo"
+context = "Android · Kotlin + C"
+summary = "App Android en Kotlin sobre el núcleo C de mGBA (JNI + NDK): biblioteca de juegos, controles táctiles editables, estados guardados, rebobinado, trucos, shaders OpenGL y CI que compila y publica el APK."
+tagline = "Un emulador completo de GBA con la experiencia de las mejores apps del género, construido sobre el núcleo de emulación más preciso."
+tags = ["Kotlin", "Android", "C", "JNI / NDK", "OpenGL ES", "CMake", "GitHub Actions"]
+problem = """
+Quería un emulador de GBA para Android con todo lo que espero como jugador (estados con miniatura, avance rápido, rebobinado, mandos físicos, sensores de cartucho) y, a la vez, un proyecto para salir de la web y trabajar con código nativo, gráficos y audio en tiempo real.
+"""
+solution = """
+La app está escrita en **Kotlin** y usa **mGBA** como núcleo, compilado con el **NDK** y **CMake**. Un puente **JNI** propio expone al lado Kotlin lo necesario: cargar ROMs, avanzar frames, audio, estados guardados y trucos.
+
+El renderizado va por **OpenGL ES** con shaders seleccionables y un hilo de emulación cuyo ritmo marca el propio audio. **GitHub Actions** ejecuta tests del núcleo con ROMs de prueba, compila el APK en cada push y publica releases con tag.
+"""
+learnings = """
+Salir de mi zona habitual (web y backend) a Android y C me obligó a pensar en rendimiento por frame, hilos y ciclos de vida de recursos. Documenté el proyecto comparando cada concepto de Android con su equivalente web, algo que me ayudó tanto a mí como a quien lo lea.
+"""
+results = [
+  "Emulador de GBA, GB y GBC completo y usable a diario.",
+  "Pipeline de CI/CD: tests del núcleo, APK firmado y release automática por tag.",
+  "Experiencia real con código nativo, OpenGL y audio en tiempo real.",
+]
+
+[[projects.links]]
+label = "Ver repositorio"
+url = "https://github.com/JoseLuixrax/gba-emulator"
+icon = "github"
+
+[[projects.kpis]]
+value = "mGBA 0.10.5"
+label = "núcleo de emulación en C integrado vía JNI"
+[[projects.kpis]]
+value = "59,73 Hz"
+label = "bucle de emulación sincronizado con el audio"
+[[projects.kpis]]
+value = "CI/CD"
+label = "tests del núcleo, APK y releases con GitHub Actions"
+
+[[projects.flow]]
+title = "ROM"
+text = "Biblioteca con escaneo de carpetas: .gba, .gb, .gbc y .zip"
+[[projects.flow]]
+title = "Kotlin"
+text = "UI, controles, ajustes, mandos y sensores"
+[[projects.flow]]
+title = "JNI"
+text = "Puente C ↔ Kotlin"
+[[projects.flow]]
+title = "mGBA (C)"
+text = "CPU, vídeo, audio y hardware de cartucho"
+[[projects.flow]]
+title = "OpenGL ES + audio"
+text = "Frames con shaders y sonido sincronizado"
+
+[[projects.features]]
+title = "Controles táctiles editables"
+text = "Arrastra y redimensiona cada botón; posiciones independientes en vertical y horizontal."
+[[projects.features]]
+title = "Estados guardados"
+text = "10 ranuras más autoguardado, con miniatura y fecha."
+[[projects.features]]
+title = "Velocidad y rebobinado"
+text = "Desde cámara lenta 0,1× hasta avance 8× o sin límite, y rebobinado manteniendo pulsado."
+[[projects.features]]
+title = "Trucos"
+text = "GameShark, Action Replay, CodeBreaker y Game Genie con detección automática del formato."
+[[projects.features]]
+title = "Hardware de cartucho"
+text = "Reloj en tiempo real, vibración, inclinación, giroscopio y sensor solar mapeados a los sensores del móvil."
+[[projects.features]]
+title = "Shaders"
+text = "Filtros nítido, pixelado, suave, scanlines, LCD y corrección de color GBA."
+[[projects.features]]
+title = "Mandos físicos"
+text = "Bluetooth y USB con reasignación de botones."
+[[projects.features]]
+title = "Partidas accesibles"
+text = "Partidas .sav importables y exportables, visibles desde la app Archivos mediante un proveedor de documentos propio."
+
+[[projects.stack]]
+name = "Kotlin"
+why = "UI y lógica de la app con ViewBinding."
+[[projects.stack]]
+name = "C + JNI (NDK)"
+why = "Puente nativo hacia el núcleo de emulación."
+[[projects.stack]]
+name = "mGBA"
+why = "El núcleo open source de GBA más preciso."
+[[projects.stack]]
+name = "OpenGL ES"
+why = "Renderizado por GPU con shaders."
+[[projects.stack]]
+name = "CMake + Gradle"
+why = "Build nativo y de la app; mGBA se descarga durante la compilación."
+[[projects.stack]]
+name = "GitHub Actions"
+why = "Tests del núcleo, compilación, firma y publicación del APK."
+
+[[projects.challenges]]
+title = "Sincronizar vídeo y audio"
+text = "A velocidad normal, la escritura bloqueante de audio marca el ritmo (la GBA produce exactamente un segundo de audio por segundo emulado). En silencio, avance rápido o rebobinado, un temporizador a 59,73 Hz toma el relevo."
+[[projects.challenges]]
+title = "Un único hilo para el núcleo"
+text = "Todo lo que toca el núcleo nativo debe ejecutarse en el hilo de emulación. El resto de hilos le envían trabajo mediante una cola concurrente."
+[[projects.challenges]]
+title = "Almacenamiento en Android moderno"
+text = "Desde Android 11 los gestores de archivos no pueden entrar en `Android/data`. Las partidas se exponen con un DocumentsProvider propio."
+[[projects.challenges]]
+title = "Releases reproducibles"
+text = "El workflow comprueba que el tag coincide con `versionName` y firma siempre con la misma clave para que cada APK se instale encima del anterior sin perder partidas."
+
+[projects.snippet]
+lang = "kotlin"
+title = "EmulatorThread.kt (extracto)"
+note = "Código abierto: el proyecto completo está en GitHub."
+code = '''
+/**
+ * Ejecuta el emulador: una iteración del bucle = un frame emulado.
+ *  - Velocidad normal con sonido: la escritura bloqueante de audio marca el ritmo.
+ *  - Silencio, avance rápido o rebobinado: temporizador a 59,73 Hz.
+ * Todo lo que toca el núcleo nativo se ejecuta en este hilo; el resto usa post().
+ */
+class EmulatorThread(
+    private val frameBuffer: FrameBuffer,
+    private val audio: AudioOutput,
+    private val callbacks: Callbacks,
+) : Thread("Emulator") {
+
+    @Volatile var fastForward = false
+    @Volatile var rewinding = false
+    private val tasks = ConcurrentLinkedQueue<Runnable>()
+
+    fun post(task: Runnable) {
+        tasks.add(task)
+        wake()
+    }
+
+    override fun run() {
+        Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_DISPLAY)
+        var nextFrameTime = System.nanoTime()
+        while (true) {
+            runPendingTasks()
+            if (quitRequested) break
+            if (paused) { waitWhilePaused(); continue }
+
+            nextFrameTime = when {
+                rewinding -> stepRewind(nextFrameTime)
+                fastForward -> stepFastForward(nextFrameTime)
+                else -> stepNormal(nextFrameTime)
+            }
+            if (NativeBridge.pollRumble()) callbacks.onRumble()
+        }
+    }
+}
+'''
+
+
+# =============================================================================
+#  11 · Discord Voice AI (personal)
+# =============================================================================
+[[projects]]
+slug = "discord-voice-ai"
+title = "Discord Voice AI: asistente de voz para Discord"
+kicker = "Proyecto personal · Open source"
+category = "personal"
+filters = ["personal", "ia"]
+status = "Open source"
+period = "2025"
+role = "Proyecto personal · desarrollo completo"
+context = "Bot de Discord · voz en tiempo casi real"
+summary = "Bot que escucha el canal de voz, detecta cuándo terminas de hablar, transcribe con Whisper, responde con un LLM y contesta con voz sintetizada en el propio canal."
+tagline = "Hablar con un asistente de IA como uno más de la conversación, sin escribir un solo comando."
+tags = ["Python", "discord.py", "asyncio", "Whisper", "LLM", "TTS", "FFmpeg"]
+problem = """
+Quería poder hablar con un asistente de IA dentro de un canal de voz de Discord, como un participante más, sin tener que escribir un comando para cada pregunta.
+"""
+solution = """
+Bot en **Python** con **discord.py** y su extensión de recepción de voz. Un *sink* propio recibe el audio PCM de cada usuario, detecta voz y silencio calculando la energía (**RMS**) y, cuando alguien termina de hablar, envía el fragmento a **Whisper** para transcribirlo.
+
+La transcripción va a un **LLM** que genera una respuesta breve y conversacional, que se sintetiza con **TTS** y se reproduce en el canal a través de **FFmpeg**.
+"""
+learnings = """
+Trabajar con audio en tiempo real obliga a pensar en latencia: cada etapa (detección, transcripción, respuesta y síntesis) suma, y la sensación de fluidez depende de recortar en todas ellas.
+"""
+results = [
+  "Conversación por voz natural con un LLM dentro de Discord.",
+  "Varios usuarios en el mismo canal, cada uno con su propio buffer.",
+  "Base para experimentar con asistentes de voz en tiempo casi real.",
+]
+
+[[projects.links]]
+label = "Ver repositorio"
+url = "https://github.com/JoseLuixrax/Discord-Voice-AI"
+icon = "github"
+
+[[projects.kpis]]
+value = "STT → LLM → TTS"
+label = "pipeline de voz completo"
+[[projects.kpis]]
+value = "1,2 s"
+label = "de silencio para detectar el final de una frase"
+[[projects.kpis]]
+value = "Multiusuario"
+label = "buffers de audio independientes por persona"
+
+[[projects.flow]]
+title = "Canal de voz"
+text = "Audio PCM 48 kHz estéreo por usuario"
+[[projects.flow]]
+title = "Detección"
+text = "Energía RMS y umbral de silencio"
+[[projects.flow]]
+title = "Whisper"
+text = "Transcripción del fragmento"
+[[projects.flow]]
+title = "LLM"
+text = "Respuesta breve y conversacional"
+[[projects.flow]]
+title = "TTS + FFmpeg"
+text = "Respuesta hablada en el canal"
+
+[[projects.features]]
+title = "Escucha continua"
+text = "Comandos `!join` y `!leave`; a partir de ahí el bot escucha sin más interacción."
+[[projects.features]]
+title = "Buffers por usuario"
+text = "Cada persona tiene su propio buffer y estado, así que varias pueden hablar en el mismo canal."
+[[projects.features]]
+title = "Fin de frase"
+text = "Umbral de energía y duración mínima para ignorar ruidos y fragmentos demasiado cortos."
+[[projects.features]]
+title = "No se escucha a sí mismo"
+text = "Mientras reproduce una respuesta, el bot ignora el audio entrante."
+[[projects.features]]
+title = "Procesado asíncrono"
+text = "Transcripción, respuesta y síntesis se ejecutan en segundo plano sin bloquear la recepción de audio."
+[[projects.features]]
+title = "Sin restos"
+text = "Los WAV y MP3 intermedios se eliminan tras usarse."
+
+[[projects.stack]]
+name = "Python + asyncio"
+why = "Concurrencia entre el hilo de audio y el event loop del bot."
+[[projects.stack]]
+name = "discord.py + voice_recv"
+why = "Recepción del audio de voz separado por usuario."
+[[projects.stack]]
+name = "Whisper"
+why = "Transcripción robusta en varios idiomas."
+[[projects.stack]]
+name = "LLM · TTS (OpenAI API)"
+why = "Generación de la respuesta y síntesis de voz."
+[[projects.stack]]
+name = "FFmpeg"
+why = "Reproducción del audio en el canal."
+
+[[projects.challenges]]
+title = "Saber cuándo alguien ha terminado de hablar"
+text = "Sin VAD externo: cálculo manual del RMS de cada paquete PCM, umbral de silencio y duración mínima de audio para no transcribir ruido."
+[[projects.challenges]]
+title = "Hilos y event loop"
+text = "El sink recibe audio en un hilo distinto al de asyncio; el procesado se programa con `run_coroutine_threadsafe` para no bloquear ninguno de los dos."
+[[projects.challenges]]
+title = "Evitar bucles de eco"
+text = "El bot descarta el audio entrante mientras habla para no transcribir su propia respuesta."
+
+[projects.snippet]
+lang = "python"
+title = "main.py (extracto simplificado)"
+note = "Código abierto: el proyecto completo está en GitHub."
+code = '''
+class ContinuousSink(voice_recv.AudioSink):
+    SILENCE_THRESHOLD = 500   # amplitud RMS
+    SILENCE_DURATION = 1.2    # segundos de silencio = fin de frase
+
+    def wants_opus(self):
+        return False          # queremos PCM
+
+    def write(self, user, data):
+        if user is None or self.voice_client.is_playing():
+            return            # no escucharse a sí mismo
+
+        pcm = data.pcm
+        samples = struct.unpack(f"<{len(pcm) // 2}h", pcm)
+        rms = math.sqrt(sum(s * s for s in samples) / len(samples)) if samples else 0
+        now = time.time()
+
+        rec = self.user_data.setdefault(user.id, {"buffer": bytearray(), "last": now, "busy": False})
+        if rec["busy"]:
+            return
+
+        if rms > self.SILENCE_THRESHOLD:
+            rec["buffer"].extend(pcm)
+            rec["last"] = now
+        elif rec["buffer"] and now - rec["last"] > self.SILENCE_DURATION:
+            audio, rec["buffer"], rec["busy"] = bytes(rec["buffer"]), bytearray(), True
+            asyncio.run_coroutine_threadsafe(self.process_audio(user, audio), self.bot.loop)
+'''
+
+
+# =============================================================================
+#  12 · Pokémon Draft Tournament (personal)
+# =============================================================================
+[[projects]]
+slug = "pokemon-draft-tournament"
+title = "Pokémon Draft Tournament"
+kicker = "Proyecto personal · Open source"
+category = "personal"
+filters = ["personal"]
+status = "Open source"
+period = "2026"
+role = "Proyecto personal · desarrollo completo"
+context = "Web app sin dependencias"
+summary = "Web app de una sola página para organizar torneos draft de Pokémon entre amigos: jugadores, rondas, emparejamientos con drag & drop, picks con sprites de PokeAPI y líder en vivo."
+tagline = "Organizar un torneo draft entre amigos en una sola pantalla, sin hojas de cálculo ni mensajes perdidos."
+tags = ["JavaScript", "HTML5", "CSS3", "PokeAPI", "Drag & Drop", "JSON"]
+problem = """
+Organizábamos torneos draft de Pokémon entre amigos con hojas de cálculo y mensajes: quién había elegido qué Pokémon, los emparejamientos de cada ronda y la clasificación. Era incómodo y fácil de liar.
+"""
+solution = """
+Una web de un solo fichero **HTML + JavaScript** sin dependencias. Gestiona jugadores, crea rondas y emparejamientos arrastrando jugadores con **drag & drop**, registra los picks con un buscador sobre los Pokémon de **PokeAPI** (con sprites y formas regionales) y muestra el líder en tiempo real.
+
+El estado completo del torneo se **exporta e importa en JSON**, así que se puede compartir o continuar en otro dispositivo.
+"""
+learnings = """
+No todo necesita un framework: para una herramienta pequeña y concreta, JavaScript sin dependencias es más rápido de construir, de desplegar y de mantener.
+"""
+results = [
+  "Torneos organizados en una sola pantalla y compartibles en un fichero JSON.",
+  "Proyecto pequeño, útil y usado de verdad por el grupo.",
+]
+
+[[projects.links]]
+label = "Ver repositorio"
+url = "https://github.com/JoseLuixrax/PokeTournament"
+icon = "github"
+
+[[projects.kpis]]
+value = "1.025"
+label = "Pokémon cargados desde PokeAPI, más formas regionales"
+[[projects.kpis]]
+value = "0"
+label = "dependencias y sin backend"
+[[projects.kpis]]
+value = "JSON"
+label = "para exportar e importar el torneo"
+
+[[projects.flow]]
+title = "Jugadores"
+text = "Alta de participantes"
+[[projects.flow]]
+title = "Rondas"
+text = "Emparejamientos con drag & drop"
+[[projects.flow]]
+title = "Draft"
+text = "Picks con buscador y sprites"
+[[projects.flow]]
+title = "Clasificación"
+text = "Líder actual en tiempo real"
+[[projects.flow]]
+title = "JSON"
+text = "Exportar e importar el torneo"
+
+[[projects.features]]
+title = "Drag & drop"
+text = "Arrastra jugadores a los huecos de cada emparejamiento."
+[[projects.features]]
+title = "PokeAPI"
+text = "Listado completo de Pokémon con sprites oficiales y alternativa si una imagen falla."
+[[projects.features]]
+title = "Rondas en pestañas"
+text = "Cada ronda con sus emparejamientos y resultados."
+[[projects.features]]
+title = "Persistencia portable"
+text = "Exportar e importar el estado completo en JSON."
+
+[[projects.stack]]
+name = "JavaScript vanilla"
+why = "Estado y renderizado sin framework."
+[[projects.stack]]
+name = "HTML5 Drag and Drop"
+why = "Interacción natural para emparejar jugadores."
+[[projects.stack]]
+name = "PokeAPI"
+why = "Datos y sprites de los Pokémon."
+[[projects.stack]]
+name = "CSS3"
+why = "Interfaz temática."
+
+[[projects.challenges]]
+title = "Estado sin framework"
+text = "Un único objeto de estado y funciones de render que repintan la vista tras cada cambio, como un framework reactivo mínimo."
+[[projects.challenges]]
+title = "Más de mil Pokémon sin backend"
+text = "Una sola llamada a PokeAPI para el listado y URLs de sprites construidas a partir del id, sin una petición por Pokémon."
+
+[projects.snippet]
+lang = "javascript"
+title = "index.html · carga de Pokémon"
+note = "Código abierto: el proyecto completo está en GitHub."
+code = '''
+async function loadPokemon() {
+  try {
+    const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025&offset=0');
+    const data = await res.json();
+
+    state.allPokemon = data.results.map((p) => p.name).sort();
+    data.results.forEach((p) => {
+      const id = parseInt(p.url.split('/').filter(Boolean).pop(), 10);
+      state.pokemonMap[p.name] = {
+        name: p.name,
+        id,
+        gen: getPokemonGen(id),
+        sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`,
+      };
+    });
+
+    renderArena();
+  } catch (err) {
+    console.error(err);
+  }
+}
+'''

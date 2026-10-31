@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Asistente de IA conectado a los datos del negocio · José Luis Pérez Lara</title>
+  <meta name="description" content="Herramientas para LLMs mediante Model Context Protocol (MCP): ventas, márgenes, stock, pedidos de Amazon, Odoo y analítica web consultables en lenguaje natural con datos reales.">
+  <meta name="author" content="José Luis Pérez Lara">
+  <link rel="canonical" href="https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/proyectos/asistente-ia-mcp.html">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:site_name" content="José Luis Pérez Lara">
+  <meta property="og:title" content="Asistente de IA conectado a los datos del negocio">
+  <meta property="og:description" content="Herramientas para LLMs mediante Model Context Protocol (MCP): ventas, márgenes, stock, pedidos de Amazon, Odoo y analítica web consultables en lenguaje natural con datos reales.">
+  <meta property="og:url" content="https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/proyectos/asistente-ia-mcp.html">
+  <meta property="og:image" content="https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/assets/img/og-cover.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(!t){t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})();</script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol><symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol><symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol><symbol id="i-github" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></symbol><symbol id="i-linkedin" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></symbol><symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol><symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></symbol><symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol><symbol id="i-package" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol><symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01"/><path d="M6 18h.01"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol><symbol id="i-languages" viewBox="0 0 24 24"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></symbol><symbol id="i-bot" viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></symbol><symbol id="i-workflow" viewBox="0 0 24 24"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></symbol><symbol id="i-cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></symbol><symbol id="i-table" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/></symbol><symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></symbol><symbol id="i-gamepad" viewBox="0 0 24 24"><path d="M6 12h4"/><path d="M8 10v4"/><path d="M15 13h.01"/><path d="M18 11h.01"/><rect width="20" height="12" x="2" y="6" rx="2"/></symbol><symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></symbol><symbol id="i-trophy" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></symbol><symbol id="i-code" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></symbol><symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol><symbol id="i-cpu" viewBox="0 0 24 24"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></symbol><symbol id="i-external" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol><symbol id="i-building" viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></symbol><symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></symbol><symbol id="i-graduation" viewBox="0 0 24 24"><path d="M22 10v6"/><path d="M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol><symbol id="i-briefcase" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol><symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol><symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol><symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol></svg>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="nav">
+    <div class="container nav__inner">
+      <a class="brand" href="../index.html">José Luis Pérez Lara</a>
+      <nav aria-label="Principal"><ul class="nav__links" id="menu"><li><a href="../index.html#sobre-mi">Sobre mí</a></li><li><a href="../index.html#proyectos">Proyectos</a></li><li><a href="../index.html#stack">Stack</a></li><li><a href="../index.html#experiencia">Experiencia</a></li><li><a href="../index.html#contacto">Contacto</a></li></ul></nav>
+      <div class="nav__actions">
+        <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="Cambiar tema claro/oscuro"><svg class="icon i-moon" aria-hidden="true"><use href="#i-moon"></use></svg><svg class="icon i-sun" aria-hidden="true"><use href="#i-sun"></use></svg></button>
+        <a class="btn btn--primary btn--sm nav__cta" href="../index.html#contacto">Contactar</a>
+        <button class="icon-btn nav__toggle" type="button" aria-label="Abrir menú" aria-controls="menu" aria-expanded="false"><svg class="icon i-open" aria-hidden="true"><use href="#i-menu"></use></svg><svg class="icon i-close" aria-hidden="true"><use href="#i-x"></use></svg></button>
+      </div>
+    </div>
+  </header>
+  <main id="contenido">
+    <header class="p-hero">
+      <div class="container">
+        <a class="back" href="../index.html#proyectos"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg> Proyectos</a>
+        <p class="label">IA aplicada · VapoSelección · IA</p>
+        <h1>Asistente de IA conectado a los datos del negocio</h1>
+        <p class="p-hero__tagline">Preguntar «¿qué tal fue la semana pasada en cada tienda?» y obtener la respuesta con datos reales, no con una estimación.</p>
+        
+        <dl class="facts"><div class="fact"><dt class="label">Rol</dt><dd>Arquitectura y desarrollo</dd></div><div class="fact"><dt class="label">Contexto</dt><dd>Ventas, stock, Amazon, ERP y analítica web</dd></div><div class="fact"><dt class="label">Periodo</dt><dd>2026</dd></div><div class="fact"><dt class="label">Estado</dt><dd><span class="status">En producción</span></dd></div></dl>
+        <div class="kpis"><div class="kpi"><div class="kpi__value">MCP</div><div class="kpi__label">protocolo estándar para dar herramientas a los LLMs</div></div><div class="kpi"><div class="kpi__value">6 fuentes</div><div class="kpi__label">PrestaShop, Amazon, Odoo, GA4, Search Console y Clarity</div></div><div class="kpi"><div class="kpi__value">Solo lectura</div><div class="kpi__label">el modelo nunca accede directamente a las bases de datos</div></div></div>
+        <div class="p-stack"><span class="label">Stack</span><span class="tech-line">MCP · n8n · JavaScript · Webhooks · Amazon SP-API · Odoo · Microsoft Clarity</span></div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="p-layout">
+        <aside class="toc" aria-label="En esta página">
+          <p class="label">En esta página</p>
+          <ol><li><a href="#problema">El problema</a></li><li><a href="#solucion">La solución</a></li><li><a href="#arquitectura">Arquitectura y flujo</a></li><li><a href="#funcionalidades">Funcionalidades clave</a></li><li><a href="#stack">Stack y por qué</a></li><li><a href="#retos">Retos técnicos</a></li><li><a href="#resultados">Resultados</a></li><li><a href="#codigo">Código</a></li><li><a href="#aprendizajes">Lo que aprendí</a></li></ol>
+        </aside>
+        <article class="p-content">
+        <section class="p-section" id="problema">
+          <h2><span class="num">01</span>El problema</h2>
+          <div class="prose"><p>La información para tomar decisiones estaba en muchos sistemas distintos y cada consulta requería saber dónde mirar, exportar y cruzar datos.</p>
+<p>Los asistentes de IA ya eran útiles para redactar o programar, pero no conocían los datos reales de la empresa, así que sus respuestas sobre el negocio eran genéricas.</p></div>
+        </section>
+        <section class="p-section" id="solucion">
+          <h2><span class="num">02</span>La solución</h2>
+          <div class="prose"><p>Construí una capa de herramientas que los asistentes de IA pueden usar mediante <strong>Model Context Protocol (MCP)</strong>. Los scripts internos de ventas, margen, almacén y pedidos se exponen como workflows de <strong>n8n</strong> con entrada validada y salida JSON.</p>
+<p>Se combinan con conectores MCP para <strong>Amazon SP-API</strong> (pedidos, inventario FBA, devoluciones, ofertas y reportes), <strong>Odoo</strong> (stock, facturas y ventas) y analítica web. El asistente decide qué herramienta usar, con qué parámetros, y responde con cifras reales.</p></div>
+        </section>
+        <section class="p-section" id="arquitectura">
+          <h2><span class="num">03</span>Arquitectura y flujo</h2>
+          <ol class="flow"><li class="flow__step"><b>Pregunta</b><span>Consulta en lenguaje natural del equipo</span></li><li class="flow__arrow" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></li><li class="flow__step"><b>LLM + MCP</b><span>El asistente elige herramienta y parámetros</span></li><li class="flow__arrow" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></li><li class="flow__step"><b>Herramientas</b><span>Workflows n8n y conectores Amazon, Odoo y analítica</span></li><li class="flow__arrow" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></li><li class="flow__step"><b>Validación</b><span>Normalización de tiendas, fechas y rangos con errores explicativos</span></li><li class="flow__arrow" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></li><li class="flow__step"><b>Respuesta</b><span>JSON con valores en texto y numéricos</span></li></ol>
+        </section>
+        <section class="p-section" id="funcionalidades">
+          <h2><span class="num">04</span>Funcionalidades clave</h2>
+          <div class="features"><div class="feature"><h3>Ventas y margen por tienda</h3><p>Ventas por país, ticket medio, clientes nuevos y margen bruto real por tienda y periodo.</p></div><div class="feature"><h3>Rotación de almacén</h3><p>Stock vivo, lento, frío y muerto valorado a coste en cada almacén.</p></div><div class="feature"><h3>Amazon</h3><p>Pedidos, inventario FBA, devoluciones, ofertas y reportes de SP-API en los cuatro marketplaces.</p></div><div class="feature"><h3>ERP</h3><p>Consultas de stock, facturas abiertas y resúmenes de venta en Odoo.</p></div><div class="feature"><h3>Histórico de Clarity</h3><p>La API de Microsoft Clarity solo devuelve los últimos días; un flujo guarda una foto diaria para construir un histórico consultable.</p></div><div class="feature"><h3>Motor común</h3><p>Un sub-workflow interno centraliza la autenticación por token y la extracción de datos; cada herramienta solo define sus parámetros.</p></div></div>
+        </section>
+        <section class="p-section" id="stack">
+          <h2><span class="num">05</span>Stack y por qué</h2>
+          <div class="tech"><div class="tech__row"><span class="tech__name">Model Context Protocol</span><span class="tech__why">Estándar abierto para exponer herramientas a LLMs de forma segura y autodescrita.</span></div><div class="tech__row"><span class="tech__name">n8n</span><span class="tech__why">Webhooks, validación y sub-workflows reutilizables sin desplegar servicios nuevos.</span></div><div class="tech__row"><span class="tech__name">JavaScript</span><span class="tech__why">Nodos de código para normalizar parámetros y extraer datos de forma robusta.</span></div><div class="tech__row"><span class="tech__name">Amazon SP-API · Odoo</span><span class="tech__why">Las fuentes de datos operativas del negocio.</span></div><div class="tech__row"><span class="tech__name">GA4 · Search Console · Clarity</span><span class="tech__why">Tráfico, posicionamiento y comportamiento de usuarios en la web.</span></div></div>
+        </section>
+        <section class="p-section" id="retos">
+          <h2><span class="num">06</span>Retos técnicos</h2>
+          <ol class="challenges"><li class="challenge"><div><h3>Herramientas que un LLM use bien</h3><p>Cada herramienta tiene una descripción precisa (qué hace, parámetros, unidades y limitaciones), porque es lo que el modelo lee para decidir. Los errores incluyen un ejemplo de llamada correcta para que el asistente se corrija solo.</p></div></li><li class="challenge"><div><h3>Parámetros flexibles, datos estrictos</h3><p>Se aceptan alias (<code>start</code>/<code>inicio</code>, <code>shop</code>/<code>tienda</code>) y se normalizan tildes y mayúsculas, pero fechas, rangos e ids se validan con mensajes claros.</p></div></li><li class="challenge"><div><h3>Seguridad</h3><p>Los scripts internos solo aceptan peticiones autenticadas con token desde n8n y el modelo solo accede a consultas acotadas de lectura, nunca a la base de datos.</p></div></li></ol>
+        </section>
+        <section class="p-section" id="resultados">
+          <h2><span class="num">07</span>Resultados</h2>
+          <ul class="checks"><li><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>Preguntas de negocio respondidas en segundos con datos reales.</span></li><li><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>Análisis que antes requerían exportaciones manuales, ahora en una conversación.</span></li><li><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>Base reutilizable: cada script interno nuevo se convierte en herramienta en minutos.</span></li></ul>
+        </section>
+        <section class="p-section" id="codigo">
+          <h2><span class="num">08</span>Código</h2>
+          <div class="code">
+            <div class="code__bar"><span>n8n · nodo «Normalizar parámetros»</span><button class="code__copy" type="button"><svg class="icon" aria-hidden="true"><use href="#i-copy"></use></svg><span>Copiar</span></button></div>
+            <pre><code class="language-javascript">// Acepta parámetros del webhook (query/body) o de otro workflow.
+const src = $input.first().json ?? {};
+const q = { ...(src.query ?? {}), ...(src.body ?? {}) };
+
+const pick = (...keys) =&gt; {
+  for (const k of keys) for (const o of [q, src]) {
+    const v = o?.[k];
+    if (v !== undefined &amp;&amp; v !== null &amp;&amp; String(v).trim() !== &#x27;&#x27;) return String(v).trim();
+  }
+  return null;
+};
+
+const shop  = pick(&#x27;shop&#x27;, &#x27;id_shop&#x27;, &#x27;tienda&#x27;);
+const start = pick(&#x27;start&#x27;, &#x27;inicio&#x27;, &#x27;fecha_inicio&#x27;);
+const end   = pick(&#x27;end&#x27;, &#x27;fin&#x27;, &#x27;fecha_fin&#x27;);
+
+const example = &#x27;{&quot;shop&quot;: &quot;1&quot;, &quot;start&quot;: &quot;2026-08-11&quot;, &quot;end&quot;: &quot;2026-08-17&quot;}&#x27;;
+const isDate = (s) =&gt; /^\d{4}-\d{2}-\d{2}$/.test(s ?? &#x27;&#x27;);
+
+if (!/^\d+$/.test(shop ?? &#x27;&#x27;)) throw new Error(`shop debe ser el id numérico de la tienda. Ejemplo: ${example}`);
+if (!isDate(start) || !isDate(end)) throw new Error(`start y end deben ir en formato YYYY-MM-DD. Ejemplo: ${example}`);
+if (end &lt; start) throw new Error(`Rango invertido: start (${start}) es posterior a end (${end})`);
+
+return [{ json: { shop, start, end } }];</code></pre>
+          </div>
+          <p class="note"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg><span>Proyecto interno: el código fuente es privado. Este fragmento está simplificado, sin credenciales ni datos de negocio.</span></p>
+        </section>
+        <section class="p-section" id="aprendizajes">
+          <h2><span class="num">09</span>Lo que aprendí</h2>
+          <div class="prose"><p>Integrar IA en una empresa no va de elegir el modelo, va de diseñar buenas herramientas: contratos claros, descripciones precisas, validación estricta y errores que expliquen cómo corregirse.</p></div>
+        </section>
+        </article>
+      </div>
+
+      <section class="p-cta" aria-labelledby="cta-title">
+        <h2 id="cta-title">¿Te interesa este perfil?</h2>
+        <p>Si este proyecto se parece a los retos de tu equipo, estaré encantado de contarte cómo lo abordaría en vuestro contexto.</p>
+        <div class="contact__actions">
+          <a class="btn btn--primary" href="mailto:joseluisperez232003@gmail.com?subject=Contacto%20desde%20tu%20portfolio"><svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg>Escríbeme</a>
+          <a class="btn btn--ghost" href="https://www.linkedin.com/in/jose-luis-perez-lara/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-linkedin"></use></svg>LinkedIn</a>
+        </div>
+      </section>
+
+      <nav class="pager" aria-label="Otros proyectos"><a class="prev" href="traductor-catalogo-ia.html"><small><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg> Anterior</small><strong>Traductor de catálogo con IA</strong></a><a class="next" href="plataforma-automatizacion-n8n.html"><small>Siguiente <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></small><strong>Plataforma de automatización con n8n y microservicios FastAPI</strong></a></nav>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span>© <span data-year>2026</span> José Luis Pérez Lara</span>
+      <div class="footer__links">
+        <a href="mailto:joseluisperez232003@gmail.com">Email</a>
+        <a href="https://www.linkedin.com/in/jose-luis-perez-lara/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/JoseLuixrax" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </footer>
+  <script src="../assets/js/prism.min.js" defer></script>
+  <script src="../assets/js/main.js" defer></script>
+</body>
+</html>
