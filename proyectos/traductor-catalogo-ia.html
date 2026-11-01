@@ -44,8 +44,8 @@
         <h1>Traductor de catálogo con IA</h1>
         <p class="p-hero__tagline">Fichas de producto en varios idiomas con calidad de catálogo, sin copiar y pegar en un traductor.</p>
         
-        <dl class="facts"><div class="fact"><dt class="label">Rol</dt><dd>Diseño y desarrollo completo</dd></div><div class="fact"><dt class="label">Contexto</dt><dd>Catálogo multi-idioma · mercados europeos</dd></div><div class="fact"><dt class="label">Periodo</dt><dd>2026</dd></div><div class="fact"><dt class="label">Estado</dt><dd><span class="status">Herramienta interna</span></dd></div></dl>
-        <div class="kpis"><div class="kpi"><div class="kpi__value">FR · DE · IT</div><div class="kpi__label">idiomas objetivo de los marketplaces europeos</div></div><div class="kpi"><div class="kpi__value">HTML intacto</div><div class="kpi__label">estructura de etiquetas validada en cada traducción</div></div><div class="kpi"><div class="kpi__value">Incremental</div><div class="kpi__label">solo se retraduce el texto que ha cambiado (hash de origen)</div></div></div>
+        <dl class="facts"><div class="fact"><dt class="label">Rol</dt><dd>Diseño y desarrollo completo</dd></div><div class="fact"><dt class="label">Contexto</dt><dd>Tienda online · español, inglés, alemán y portugués</dd></div><div class="fact"><dt class="label">Periodo</dt><dd>2026</dd></div><div class="fact"><dt class="label">Estado</dt><dd><span class="status">Herramienta interna</span></dd></div></dl>
+        <div class="kpis"><div class="kpi"><div class="kpi__value">EN · DE · PT</div><div class="kpi__label">idiomas de destino a partir del catálogo en español</div></div><div class="kpi"><div class="kpi__value">HTML intacto</div><div class="kpi__label">estructura de etiquetas validada en cada traducción</div></div><div class="kpi"><div class="kpi__value">Incremental</div><div class="kpi__label">solo se retraduce el texto que ha cambiado (hash de origen)</div></div></div>
         <div class="p-stack"><span class="label">Stack</span><span class="tech-line">Python · LLM API · Prompt engineering · PrestaShop · SQL</span></div>
       </div>
     </header>
@@ -59,7 +59,7 @@
         <article class="p-content">
         <section class="p-section" id="problema">
           <h2><span class="num">01</span>El problema</h2>
-          <div class="prose"><p>Vender en Francia, Alemania e Italia exige fichas de producto en el idioma del cliente. Traducir a mano cientos de descripciones no escala.</p>
+          <div class="prose"><p>La tienda online vende en español, inglés, alemán y portugués, y cada ficha de producto tiene que estar en el idioma del cliente. Traducir a mano cientos de descripciones a tres idiomas no era viable.</p>
 <p>Los traductores automáticos genéricos tampoco servían: rompían el HTML de las fichas, traducían marcas o términos técnicos del sector que deben quedarse como están y no mantenían un tono consistente entre productos.</p></div>
         </section>
         <section class="p-section" id="solucion">
@@ -85,7 +85,7 @@
         </section>
         <section class="p-section" id="resultados">
           <h2><span class="num">07</span>Resultados</h2>
-          <ul class="checks"><li><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>Fichas listas para nuevos mercados sin trabajo manual de traducción.</span></li><li><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>Terminología consistente entre idiomas y canales de venta.</span></li><li><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>Coste de API controlado gracias al procesado incremental.</span></li></ul>
+          <ul class="checks"><li><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>Fichas en inglés, alemán y portugués sin trabajo manual de traducción.</span></li><li><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>Terminología consistente en todos los idiomas de la tienda.</span></li><li><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>Coste de API controlado gracias al procesado incremental.</span></li></ul>
         </section>
         <section class="p-section" id="codigo">
           <h2><span class="num">08</span>Código</h2>

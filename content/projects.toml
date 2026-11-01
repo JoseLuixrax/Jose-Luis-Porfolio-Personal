@@ -505,13 +505,13 @@ filters = ["ia", "ecommerce", "automatizacion"]
 status = "Herramienta interna"
 period = "2026"
 role = "Diseño y desarrollo completo"
-context = "Catálogo multi-idioma · mercados europeos"
+context = "Tienda online · español, inglés, alemán y portugués"
 summary = "Traducción automática de fichas de producto con LLMs: respeta el HTML, aplica un glosario del sector, valida el resultado y solo retraduce lo que ha cambiado."
 tagline = "Fichas de producto en varios idiomas con calidad de catálogo, sin copiar y pegar en un traductor."
 tags = ["Python", "LLM API", "Prompt engineering", "PrestaShop", "SQL"]
 confidential = true
 problem = """
-Vender en Francia, Alemania e Italia exige fichas de producto en el idioma del cliente. Traducir a mano cientos de descripciones no escala.
+La tienda online vende en español, inglés, alemán y portugués, y cada ficha de producto tiene que estar en el idioma del cliente. Traducir a mano cientos de descripciones a tres idiomas no era viable.
 
 Los traductores automáticos genéricos tampoco servían: rompían el HTML de las fichas, traducían marcas o términos técnicos del sector que deben quedarse como están y no mantenían un tono consistente entre productos.
 """
@@ -524,14 +524,14 @@ learnings = """
 Trabajando con LLMs he visto que un buen glosario, unas instrucciones precisas y validar cada respuesta influyen más en la calidad que el modelo que elijas.
 """
 results = [
-  "Fichas listas para nuevos mercados sin trabajo manual de traducción.",
-  "Terminología consistente entre idiomas y canales de venta.",
+  "Fichas en inglés, alemán y portugués sin trabajo manual de traducción.",
+  "Terminología consistente en todos los idiomas de la tienda.",
   "Coste de API controlado gracias al procesado incremental.",
 ]
 
 [[projects.kpis]]
-value = "FR · DE · IT"
-label = "idiomas objetivo de los marketplaces europeos"
+value = "EN · DE · PT"
+label = "idiomas de destino a partir del catálogo en español"
 [[projects.kpis]]
 value = "HTML intacto"
 label = "estructura de etiquetas validada en cada traducción"
