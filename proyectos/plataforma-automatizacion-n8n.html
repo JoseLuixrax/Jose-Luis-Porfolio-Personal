@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Plataforma de automatización con n8n y microservicios FastAPI · José Luis Pérez Lara</title>
-  <meta name="description" content="n8n autoalojado en Docker como columna vertebral de la operativa: más de 10 workflows en producción, formularios internos para el equipo y microservicios FastAPI detrás de Traefik para el procesado pesado de datos.">
+  <meta name="description" content="n8n autoalojado en Docker como columna vertebral de la operativa: más de 10 workflows en producción, formularios internos para el equipo y microservicios FastAPI detrás de Nginx para el procesado pesado de datos.">
   <meta name="author" content="José Luis Pérez Lara">
   <link rel="canonical" href="https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/proyectos/plataforma-automatizacion-n8n.html">
   <meta property="og:type" content="article">
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="José Luis Pérez Lara">
   <meta property="og:title" content="Plataforma de automatización con n8n y microservicios FastAPI">
-  <meta property="og:description" content="n8n autoalojado en Docker como columna vertebral de la operativa: más de 10 workflows en producción, formularios internos para el equipo y microservicios FastAPI detrás de Traefik para el procesado pesado de datos.">
+  <meta property="og:description" content="n8n autoalojado en Docker como columna vertebral de la operativa: más de 10 workflows en producción, formularios internos para el equipo y microservicios FastAPI detrás de Nginx para el procesado pesado de datos.">
   <meta property="og:url" content="https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/proyectos/plataforma-automatizacion-n8n.html">
   <meta property="og:image" content="https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/assets/img/og-cover.png">
   <meta name="twitter:card" content="summary_large_image">
@@ -44,9 +44,9 @@
         <h1>Plataforma de automatización con n8n y microservicios FastAPI</h1>
         <p class="p-hero__tagline">Que las tareas repetitivas dejen de depender de alguien: formularios, cron, webhooks y servicios propios trabajando juntos.</p>
         
-        <dl class="facts"><div class="fact"><dt class="label">Rol</dt><dd>Arquitectura, desarrollo y operación</dd></div><div class="fact"><dt class="label">Contexto</dt><dd>Operaciones internas de toda la empresa</dd></div><div class="fact"><dt class="label">Periodo</dt><dd>2025 – actualidad</dd></div><div class="fact"><dt class="label">Estado</dt><dd><span class="status">En producción</span></dd></div></dl>
+        <dl class="facts"><div class="fact"><dt class="label">Rol</dt><dd>Arquitectura, desarrollo y operación</dd></div><div class="fact"><dt class="label">Contexto</dt><dd>Operaciones internas de toda la empresa</dd></div><div class="fact"><dt class="label">Periodo</dt><dd>2025 - actualidad</dd></div><div class="fact"><dt class="label">Estado</dt><dd><span class="status">En producción</span></dd></div></dl>
         <div class="kpis"><div class="kpi"><div class="kpi__value">+10</div><div class="kpi__label">workflows activos en producción</div></div><div class="kpi"><div class="kpi__value">3 disparadores</div><div class="kpi__label">cron, formularios internos y webhooks</div></div><div class="kpi"><div class="kpi__value">FastAPI</div><div class="kpi__label">microservicios propios para el procesado pesado</div></div></div>
-        <div class="p-stack"><span class="label">Stack</span><span class="tech-line">n8n · FastAPI · Python · Pandas · Docker · Traefik · Google Workspace</span></div>
+        <div class="p-stack"><span class="label">Stack</span><span class="tech-line">n8n · FastAPI · Python · Pandas · Docker · Nginx · Google Workspace</span></div>
       </div>
     </header>
 
@@ -64,7 +64,7 @@
         </section>
         <section class="p-section" id="solucion">
           <h2><span class="num">02</span>La solución</h2>
-          <div class="prose"><p>Desplegué <strong>n8n autoalojado</strong> en Docker como orquestador central y lo complementé con <strong>microservicios FastAPI</strong> propios, publicados detrás de <strong>Traefik</strong>, para todo lo que no debe hacerse en nodos visuales: limpieza de Excel, generación de ficheros y transformaciones con Pandas.</p>
+          <div class="prose"><p>Desplegué <strong>n8n autoalojado</strong> en Docker como orquestador central y lo complementé con <strong>microservicios FastAPI</strong> propios, publicados detrás de <strong>Nginx</strong>, para todo lo que no debe hacerse en nodos visuales: limpieza de Excel, generación de ficheros y transformaciones con Pandas.</p>
 <p>Reparto de responsabilidades claro: n8n se encarga de disparadores, integraciones, reintentos y notificaciones; Python, del cálculo.</p></div>
         </section>
         <section class="p-section" id="arquitectura">
@@ -77,7 +77,7 @@
         </section>
         <section class="p-section" id="stack">
           <h2><span class="num">05</span>Stack y por qué</h2>
-          <div class="tech"><div class="tech__row"><span class="tech__name">n8n</span><span class="tech__why">Orquestador visual autoalojado, con código cuando hace falta.</span></div><div class="tech__row"><span class="tech__name">FastAPI</span><span class="tech__why">APIs Python rápidas, tipadas y con documentación OpenAPI automática.</span></div><div class="tech__row"><span class="tech__name">Pandas · openpyxl</span><span class="tech__why">Lectura, limpieza y escritura de Excel.</span></div><div class="tech__row"><span class="tech__name">Traefik</span><span class="tech__why">Exposición de los servicios con TLS y enrutado por dominio.</span></div><div class="tech__row"><span class="tech__name">Google Sheets · Drive</span><span class="tech__why">Donde el equipo ya trabaja a diario.</span></div></div>
+          <div class="tech"><div class="tech__row"><span class="tech__name">n8n</span><span class="tech__why">Orquestador visual autoalojado, con código cuando hace falta.</span></div><div class="tech__row"><span class="tech__name">FastAPI</span><span class="tech__why">APIs Python rápidas, tipadas y con documentación OpenAPI automática.</span></div><div class="tech__row"><span class="tech__name">Pandas · openpyxl</span><span class="tech__why">Lectura, limpieza y escritura de Excel.</span></div><div class="tech__row"><span class="tech__name">Nginx</span><span class="tech__why">Exposición de los servicios con TLS y enrutado por dominio.</span></div><div class="tech__row"><span class="tech__name">Google Sheets · Drive</span><span class="tech__why">Donde el equipo ya trabaja a diario.</span></div></div>
         </section>
         <section class="p-section" id="retos">
           <h2><span class="num">06</span>Retos técnicos</h2>

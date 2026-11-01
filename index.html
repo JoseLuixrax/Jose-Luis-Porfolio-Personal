@@ -97,7 +97,7 @@
               <div class="t-gap"></div>
               <div><span class="t-p">$</span> <span class="t-c">cat stack.txt</span></div>
               <div><span class="t-k">backend</span>  python · php · sql</div>
-              <div><span class="t-k">infra</span>    docker · traefik · linux</div>
+              <div><span class="t-k">infra</span>    docker · nginx · linux</div>
               <div><span class="t-k">integra</span>  n8n · sp-api · odoo · mcp</div>
               <div><span class="t-k">data/ia</span>  pandas · llms · ml</div>
               <div class="t-gap"></div>
@@ -141,9 +141,9 @@
             <div>
               <h3>Cómo trabajo</h3>
               <ul class="dash-list">
-                <li>Del problema de negocio a producción, con foco en el impacto.</li>
+                <li>Entiendo el problema de negocio antes de escribir código y lo llevo hasta producción.</li>
                 <li>Si una tarea se repite, se automatiza.</li>
-                <li>Errores controlados y alertas claras: nada falla en silencio.</li>
+                <li>Si algo falla, que avise y explique qué ha pasado.</li>
                 <li>Documentación suficiente para que otros puedan mantenerlo.</li>
               </ul>
             </div>
@@ -183,7 +183,7 @@
             <svg class="icon" aria-hidden="true"><use href="#i-server"></use></svg>
             <h3>Infraestructura</h3>
             <p>Servidores Linux, contenedores, reverse proxy, migraciones, CI y resolución de incidencias en producción.</p>
-            <p class="tech-line">Docker · Traefik · Linux · GitHub Actions</p>
+            <p class="tech-line">Docker · Nginx · Linux · GitHub Actions</p>
           </article>
           <article class="service">
             <svg class="icon" aria-hidden="true"><use href="#i-chart"></use></svg>
@@ -225,15 +225,15 @@
           <a class="pcard" href="proyectos/sistema-fba-amazon.html" data-filters="ecommerce automatizacion datos">
             <p class="label">VapoSelección · Amazon FBA</p>
             <h3 class="pcard__title">Sistema de gestión FBA para Amazon</h3>
-            <p class="pcard__summary">Automatización end-to-end de la operativa FBA en 4 marketplaces: reportes vía SP-API, cálculo de reposición, inventario envejecido por tramos y etiquetas FNSKU generadas sin intervención manual.</p>
+            <p class="pcard__summary">Automatización completa de la operativa FBA en 4 marketplaces: reportes vía SP-API, cálculo de reposición, inventario envejecido por tramos y etiquetas FNSKU generadas sin intervención manual.</p>
             <p class="tech-line">Python · Amazon SP-API · n8n · Pandas · Google Sheets</p>
             <div class="pcard__foot"><span class="status">En producción</span><span class="pcard__more">Ver proyecto <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></span></div>
           </a>
           <a class="pcard" href="proyectos/migracion-prestashop-docker.html" data-filters="infra ecommerce">
             <p class="label">VapoSelección · Infraestructura</p>
             <h3 class="pcard__title">Migración de PrestaShop a contenedores en VPS propio</h3>
-            <p class="pcard__summary">De un hosting compartido con Plesk a un VPS Ubuntu con Docker Compose, Traefik y HTTPS automático. PrestaShop 1.7 multi-tienda, n8n y microservicios bajo un mismo stack reproducible.</p>
-            <p class="tech-line">Docker · Docker Compose · Traefik · PrestaShop 1.7 · PHP 7.4</p>
+            <p class="pcard__summary">De un hosting compartido con Plesk a un VPS Ubuntu con Docker Compose, Nginx y HTTPS automático. PrestaShop 1.7 multi-tienda, n8n y microservicios bajo un mismo stack reproducible.</p>
+            <p class="tech-line">Docker · Docker Compose · Nginx · PrestaShop 1.7 · PHP 7.4</p>
             <div class="pcard__foot"><span class="status">En producción</span><span class="pcard__more">Ver proyecto <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></span></div>
           </a>
           <a class="pcard" href="proyectos/dashboard-ventas-almacen.html" data-filters="datos ecommerce">
@@ -260,7 +260,7 @@
           <a class="pcard" href="proyectos/plataforma-automatizacion-n8n.html" data-filters="automatizacion infra">
             <p class="label">VapoSelección · Automatización</p>
             <h3 class="pcard__title">Plataforma de automatización con n8n y microservicios FastAPI</h3>
-            <p class="pcard__summary">n8n autoalojado en Docker como columna vertebral de la operativa: más de 10 workflows en producción, formularios internos para el equipo y microservicios FastAPI detrás de Traefik para el procesado pesado de datos.</p>
+            <p class="pcard__summary">n8n autoalojado en Docker como columna vertebral de la operativa: más de 10 workflows en producción, formularios internos para el equipo y microservicios FastAPI detrás de Nginx para el procesado pesado de datos.</p>
             <p class="tech-line">n8n · FastAPI · Python · Pandas · Docker</p>
             <div class="pcard__foot"><span class="status">En producción</span><span class="pcard__more">Ver proyecto <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></span></div>
           </a>
@@ -321,7 +321,7 @@
         <div class="rows">
           <div class="row"><div class="row__label">Backend</div><div class="row__value">Python · PHP · Node.js · FastAPI · REST APIs · Bash</div></div>
           <div class="row"><div class="row__label">Bases de datos</div><div class="row__value">MySQL · MariaDB · PostgreSQL · MongoDB · SQL avanzado</div></div>
-          <div class="row"><div class="row__label">Infraestructura</div><div class="row__value">Docker · Docker Compose · Traefik · Nginx · Apache · Linux · Git · GitHub Actions · GitLab</div></div>
+          <div class="row"><div class="row__label">Infraestructura</div><div class="row__value">Docker · Docker Compose · Nginx · Apache · Linux · Git · GitHub Actions · GitLab</div></div>
           <div class="row"><div class="row__label">Integraciones</div><div class="row__value">n8n · Amazon SP-API · Odoo · Google Sheets / Drive · Webhooks · MCP</div></div>
           <div class="row"><div class="row__label">Datos e IA</div><div class="row__value">Pandas · NumPy · Machine Learning · Redes neuronales · LLMs · Whisper · Apache Spark · Hadoop · Kafka</div></div>
           <div class="row"><div class="row__label">Frontend y e-commerce</div><div class="row__value">PrestaShop · Smarty · JavaScript · React · Next.js · HTML / CSS · Bootstrap · Kotlin (Android)</div></div>
@@ -340,7 +340,7 @@
         <div class="timeline">
           <article class="entry">
             <div>
-              <div class="entry__when">Mar 2025 — Actualidad</div>
+              <div class="entry__when">Mar 2025 - Actualidad</div>
               <div class="entry__org">VapoSelección S.L.</div>
               <div class="entry__place">E-commerce multicanal · Córdoba</div>
             </div>
@@ -348,7 +348,7 @@
               <h3>Responsable Técnico · Backend &amp; Automation Engineer</h3>
               <p>Responsable de la operación digital de la empresa: e-commerce PrestaShop, ventas en cuatro marketplaces de Amazon (ES/FR/DE/IT), infraestructura propia y automatización de procesos internos.</p>
               <ul class="dash-list">
-                <li>Migración de la infraestructura desde hosting compartido a un VPS Ubuntu propio con Docker y Traefik.</li>
+                <li>Migración de la infraestructura desde hosting compartido a un VPS Ubuntu propio con Docker y Nginx.</li>
                 <li>Reestructuración de la tienda PrestaShop: plantilla, módulos PHP a medida y optimización multi-tienda.</li>
                 <li>Sistema de gestión FBA sobre Amazon SP-API: reposición, inventario envejecido, etiquetas FNSKU y plantillas de envío.</li>
                 <li>Plataforma de automatización con n8n y microservicios FastAPI para reporting y eliminación de tareas manuales.</li>
@@ -363,14 +363,14 @@
         <h3 class="subhead">Formación</h3>
         <div class="timeline">
           <div class="entry">
-            <div class="entry__when">2023 — 2024</div>
+            <div class="entry__when">2023 - 2024</div>
             <div>
               <h3>Máster FP en Inteligencia Artificial y Big Data</h3>
               <p class="entry__place">I.E.S. Gran Capitán · Córdoba</p>
             </div>
           </div>
           <div class="entry">
-            <div class="entry__when">2021 — 2023</div>
+            <div class="entry__when">2021 - 2023</div>
             <div>
               <h3>Grado Superior en Desarrollo de Aplicaciones Web</h3>
               <p class="entry__place">I.E.S. Gran Capitán · Córdoba</p>

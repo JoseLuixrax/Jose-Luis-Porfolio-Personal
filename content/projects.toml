@@ -53,10 +53,10 @@ kicker = "VapoSelección · Amazon FBA"
 category = "ecommerce"
 filters = ["ecommerce", "automatizacion", "datos"]
 status = "En producción"
-period = "2025 – actualidad"
+period = "2025 - actualidad"
 role = "Diseño, desarrollo y mantenimiento"
 context = "E-commerce multicanal · 4 marketplaces"
-summary = "Automatización end-to-end de la operativa FBA en 4 marketplaces: reportes vía SP-API, cálculo de reposición, inventario envejecido por tramos y etiquetas FNSKU generadas sin intervención manual."
+summary = "Automatización completa de la operativa FBA en 4 marketplaces: reportes vía SP-API, cálculo de reposición, inventario envejecido por tramos y etiquetas FNSKU generadas sin intervención manual."
 tagline = "De descargar CSV a mano a un sistema que calcula qué enviar a Amazon, qué liquidar y genera las etiquetas por sí solo."
 tags = ["Python", "Amazon SP-API", "n8n", "Pandas", "Google Sheets", "Docker"]
 confidential = true
@@ -71,7 +71,7 @@ Construí un conjunto de flujos sobre **Amazon SP-API** orquestados con **n8n** 
 Los procesos programados se ejecutan solos y entregan el resultado por email o en Google Drive. Los que necesitan una decisión humana (qué envío preparar, para qué marketplace) se lanzan desde un **formulario interno**, sin tocar código ni Seller Central.
 """
 learnings = """
-Diseñar para el fallo: en integraciones con APIs externas lo normal es que algo falle (reportes cancelados, ficheros vacíos, límites de peticiones). Notificar con contexto claro vale más que reintentar a ciegas, y es lo que hace que el equipo confíe en la automatización.
+En integraciones con APIs externas lo normal es que algo falle tarde o temprano (reportes cancelados, ficheros vacíos, límites de peticiones). Avisar con un mensaje que explique qué ha pasado sirve más que reintentar a ciegas, y es lo que hace que el equipo se fíe de la automatización.
 """
 results = [
   "Reposición calculada de forma programada con datos reales de ventas y stock de cada marketplace.",
@@ -127,7 +127,7 @@ text = "Reportes en estado `FATAL`, hojas mal formadas o columnas ausentes gener
 
 [[projects.stack]]
 name = "Amazon SP-API"
-why = "Reports API, FBA Inventory y Product Labels: la fuente de verdad de Amazon, sin scraping ni exportaciones manuales."
+why = "Reports API, FBA Inventory y Product Labels: los datos salen directamente de Amazon, sin scraping ni exportaciones manuales."
 [[projects.stack]]
 name = "n8n"
 why = "Orquestación, esperas asíncronas, reintentos y formularios para el equipo."
@@ -149,7 +149,7 @@ title = "Documentos comprimidos o planos"
 text = "Según el tipo de reporte y el país, el documento llega comprimido en GZIP o en texto plano. El flujo lee el algoritmo de compresión de la respuesta y descomprime solo cuando hace falta."
 [[projects.challenges]]
 title = "Cuatro marketplaces, un solo flujo"
-text = "En vez de duplicar flujos por país, cada marketplace se parametriza (ID, plantilla, destino) y un switch enruta el procesado. Añadir un país nuevo es configuración, no código."
+text = "En vez de duplicar flujos por país, cada marketplace se parametriza (ID, plantilla, destino) y un switch enruta el procesado. Para añadir un país nuevo basta con configurarlo, sin tocar código."
 
 [projects.snippet]
 lang = "python"
@@ -211,12 +211,12 @@ kicker = "VapoSelección · Infraestructura"
 category = "infra"
 filters = ["infra", "ecommerce"]
 status = "En producción"
-period = "2025 – 2026"
+period = "2025 - 2026"
 role = "Diseño y ejecución completa de la migración"
 context = "Tienda principal + ecosistema de automatización"
-summary = "De un hosting compartido con Plesk a un VPS Ubuntu con Docker Compose, Traefik y HTTPS automático. PrestaShop 1.7 multi-tienda, n8n y microservicios bajo un mismo stack reproducible."
+summary = "De un hosting compartido con Plesk a un VPS Ubuntu con Docker Compose, Nginx y HTTPS automático. PrestaShop 1.7 multi-tienda, n8n y microservicios bajo un mismo stack reproducible."
 tagline = "Llevar la tienda principal y todo el ecosistema de automatización a una infraestructura propia, reproducible y bajo control."
-tags = ["Docker", "Docker Compose", "Traefik", "PrestaShop 1.7", "PHP 7.4", "MariaDB", "Ubuntu 22.04"]
+tags = ["Docker", "Docker Compose", "Nginx", "PrestaShop 1.7", "PHP 7.4", "MariaDB", "Ubuntu 22.04"]
 confidential = true
 problem = """
 La tienda corría en un hosting compartido gestionado con Plesk: recursos limitados y compartidos con otros clientes, sin control sobre la versión de PHP ni sobre el servidor, y sin un lugar donde desplegar las herramientas propias que la empresa empezaba a necesitar (n8n, microservicios, ERP).
@@ -224,7 +224,7 @@ La tienda corría en un hosting compartido gestionado con Plesk: recursos limita
 Cada pieza nueva acababa siendo un servicio externo más o un parche sobre el hosting.
 """
 solution = """
-Diseñé una plataforma sobre un **VPS Ubuntu 22.04** (12 vCPU, 24 GB de RAM y 720 GB NVMe) donde cada servicio vive en su contenedor y se define en **Docker Compose**. **Traefik** actúa como reverse proxy único: enruta por dominio y emite y renueva los certificados TLS de forma automática.
+Diseñé una plataforma sobre un **VPS Ubuntu 22.04** (12 vCPU, 24 GB de RAM y 720 GB NVMe) donde cada servicio vive en su contenedor y se define en **Docker Compose**. **Nginx** actúa como reverse proxy único: enruta cada dominio a su contenedor y termina TLS con certificados Let's Encrypt que Certbot renueva de forma automática.
 
 Migré **PrestaShop 1.7.8 multi-tienda** con su base de datos **MariaDB**, ficheros e imágenes, manteniendo **PHP 7.4** en una imagen fijada para no romper módulos, y dejé n8n y los microservicios en el mismo stack con redes internas separadas: la base de datos nunca queda expuesta a Internet.
 """
@@ -246,14 +246,14 @@ value = "PHP 7.4"
 label = "fijado en imagen para garantizar compatibilidad con PrestaShop 1.7.8"
 [[projects.kpis]]
 value = "HTTPS auto"
-label = "certificados Let's Encrypt emitidos y renovados por Traefik"
+label = "certificados Let's Encrypt emitidos y renovados con Certbot"
 
 [[projects.flow]]
 title = "Internet"
 text = "Tráfico HTTPS a la tienda y a las herramientas internas"
 [[projects.flow]]
-title = "Traefik"
-text = "Reverse proxy, TLS automático y enrutado por labels"
+title = "Nginx"
+text = "Reverse proxy, terminación TLS y enrutado por dominio"
 [[projects.flow]]
 title = "PrestaShop"
 text = "PHP 7.4 en contenedor, multi-tienda"
@@ -269,10 +269,10 @@ title = "Infraestructura como código"
 text = "Todo el stack descrito en `docker-compose.yml`: levantar el entorno en otra máquina es clonar, configurar el `.env` y arrancar."
 [[projects.features]]
 title = "TLS sin mantenimiento"
-text = "Certificados emitidos y renovados por Traefik. Publicar un subdominio nuevo es añadir un par de labels al servicio."
+text = "Certificados emitidos y renovados automáticamente con Certbot. Publicar un subdominio nuevo es añadir su `server` en Nginx y emitir el certificado."
 [[projects.features]]
 title = "Aislamiento por redes"
-text = "La base de datos solo es accesible desde la red interna de la aplicación; únicamente Traefik publica puertos al exterior."
+text = "La base de datos solo es accesible desde la red interna de la aplicación; únicamente Nginx publica puertos al exterior."
 [[projects.features]]
 title = "Versiones fijadas"
 text = "PHP 7.4 con las extensiones que necesita PrestaShop (gd, intl, zip, pdo_mysql, opcache) definido en la imagen."
@@ -290,8 +290,8 @@ why = "Base estable y con soporte largo para el host."
 name = "Docker + Compose"
 why = "Entornos reproducibles, despliegues predecibles y servicios aislados."
 [[projects.stack]]
-name = "Traefik"
-why = "Reverse proxy con descubrimiento automático de servicios y certificados ACME."
+name = "Nginx"
+why = "Reverse proxy maduro y eficiente, con control fino sobre virtual hosts, cabeceras y terminación TLS."
 [[projects.stack]]
 name = "MariaDB"
 why = "Compatible con el dump original y con buen rendimiento en consultas multi-tienda."
@@ -304,7 +304,7 @@ title = "Multi-tienda y dominios"
 text = "PrestaShop guarda los dominios de cada tienda en base de datos (`ps_shop_url` y configuración). Tras importar el dump hay que ajustar dominios y rutas, y regenerar la caché para que cada tienda resuelva bien detrás del proxy."
 [[projects.challenges]]
 title = "HTTPS detrás de un reverse proxy"
-text = "Con Traefik terminando TLS, PrestaShop recibe tráfico HTTP interno. Hay que respetar las cabeceras `X-Forwarded-Proto` para evitar bucles de redirección y contenido mixto."
+text = "Con Nginx terminando TLS, PrestaShop recibe tráfico HTTP interno. Hay que propagar y respetar las cabeceras `X-Forwarded-Proto` para evitar bucles de redirección y contenido mixto."
 [[projects.challenges]]
 title = "Corte con la mínima parada"
 text = "Sincronización previa de ficheros con rsync, TTL de DNS reducido con antelación y, en la ventana de cambio, último volcado de la base de datos más el delta de ficheros."
@@ -317,21 +317,13 @@ lang = "yaml"
 title = "docker-compose.yml (extracto)"
 code = '''
 services:
-  traefik:
-    image: traefik:v3.1
-    command:
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --entrypoints.web.address=:80
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      - --entrypoints.websecure.address=:443
-      - --certificatesresolvers.le.acme.tlschallenge=true
-      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
-      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
-    ports: ["80:80", "443:443"]
+  nginx:
+    image: nginx:1.26-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]    # el único servicio expuesto
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./letsencrypt:/letsencrypt
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro      # un server por dominio
+      - /etc/letsencrypt:/etc/letsencrypt:ro     # certificados de Certbot
     networks: [proxy]
 
   prestashop:
@@ -340,13 +332,7 @@ services:
     env_file: .env
     volumes:
       - ./shop:/var/www/html
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=proxy
-      - traefik.http.routers.shop.rule=Host(`${SHOP_DOMAIN}`)
-      - traefik.http.routers.shop.entrypoints=websecure
-      - traefik.http.routers.shop.tls.certresolver=le
-    networks: [proxy, backend]
+    networks: [proxy, backend]     # Nginx le llega por la red proxy
 
   mariadb:
     image: mariadb:10.6
@@ -381,13 +367,13 @@ period = "2026"
 role = "Diseño y desarrollo completo"
 context = "Tienda online + 3 tiendas físicas"
 summary = "Panel interno en PHP + SQL que unifica ventas por país y canal, margen bruto real y rotación del stock de 3 almacenes valorado a coste desde Odoo. También disponible como API JSON."
-tagline = "Una única fuente de verdad para responder «¿cómo vamos?»: ventas, margen real y qué stock está parado, por tienda y por almacén."
+tagline = "Un solo sitio para ver cómo vamos: ventas, margen real y qué stock está parado, por tienda y por almacén."
 tags = ["PHP", "SQL avanzado", "MariaDB", "Odoo API", "n8n", "JavaScript"]
 confidential = true
 problem = """
 Las cifras de negocio estaban repartidas: ventas online en PrestaShop, ventas de tienda física en otro sistema, costes en el ERP y Amazon por separado.
 
-Responder preguntas sencillas — cuánto vendimos la semana pasada por país, qué margen real dejó cada tienda o cuánto dinero hay inmovilizado en stock que no rota — exigía exportar y cruzar hojas de cálculo cada vez.
+Para responder preguntas sencillas, como cuánto vendimos la semana pasada por país, qué margen real dejó cada tienda o cuánto dinero hay inmovilizado en stock que no rota, había que exportar y cruzar hojas de cálculo cada vez.
 """
 solution = """
 Desarrollé un dashboard interno en **PHP** con consultas **SQL** optimizadas sobre la base de datos multi-tienda de PrestaShop y datos de coste obtenidos de **Odoo**. Tiene dos paneles: **ventas** (por país, canal y periodo) y **almacén** (rotación del stock por días sin venta, valorado a precio de coste).
@@ -395,7 +381,7 @@ Desarrollé un dashboard interno en **PHP** con consultas **SQL** optimizadas so
 Después lo convertí en una **API**: un flujo de n8n llama a los scripts con token, extrae los valores y devuelve JSON limpio para que otras automatizaciones y asistentes de IA puedan usar los mismos KPIs.
 """
 learnings = """
-Un dashboard vale tanto como la confianza en sus números. Marcar explícitamente cuándo un dato está incompleto (por ejemplo, si el ERP no ha respondido) es más importante que cualquier gráfico.
+Si nadie se fía de los números, el dashboard no sirve de nada. Por eso me parece más importante marcar cuándo un dato está incompleto (por ejemplo, si el ERP no ha respondido) que cualquier gráfico.
 """
 results = [
   "Dirección consulta ventas, margen y stock parado sin pedir exportaciones.",
@@ -437,7 +423,7 @@ title = "Margen bruto real"
 text = "Calculado sobre el coste real de cada producto vendido, no sobre un porcentaje estimado, por tienda y rango de fechas."
 [[projects.features]]
 title = "Rotación de almacén"
-text = "Stock clasificado por días sin venta — vivo (0–90), lento (91–120), frío (121–180) y muerto (más de 180) — con su valor a coste."
+text = "Stock clasificado por días sin venta, con su valor a coste: vivo (0-90), lento (91-120), frío (121-180) y muerto (más de 180)."
 [[projects.features]]
 title = "Lógica de almacén central"
 text = "En el almacén central cuenta la última venta en cualquier canal (tiendas, web y Amazon); en cada tienda, solo sus propias ventas."
@@ -535,7 +521,7 @@ Desarrollé una herramienta en **Python** que lee los textos de producto de **Pr
 El prompt fija el tono, prohíbe tocar etiquetas HTML, marcas y unidades, e incluye un **glosario del sector**. Cada respuesta se **valida** antes de guardarse y un **hash del texto de origen** evita volver a traducir (y pagar) lo que no ha cambiado.
 """
 learnings = """
-Con LLMs, la calidad sale de las restricciones: un buen glosario, instrucciones precisas y validaciones automáticas después de cada llamada importan más que el modelo elegido.
+Trabajando con LLMs he visto que un buen glosario, unas instrucciones precisas y validar cada respuesta influyen más en la calidad que el modelo que elijas.
 """
 results = [
   "Fichas listas para nuevos mercados sin trabajo manual de traducción.",
@@ -679,7 +665,7 @@ Construí una capa de herramientas que los asistentes de IA pueden usar mediante
 Se combinan con conectores MCP para **Amazon SP-API** (pedidos, inventario FBA, devoluciones, ofertas y reportes), **Odoo** (stock, facturas y ventas) y analítica web. El asistente decide qué herramienta usar, con qué parámetros, y responde con cifras reales.
 """
 learnings = """
-Integrar IA en una empresa no va de elegir el modelo, va de diseñar buenas herramientas: contratos claros, descripciones precisas, validación estricta y errores que expliquen cómo corregirse.
+Al integrar IA en una empresa, el modelo importa menos de lo que parece. Lo que marca la diferencia son las herramientas que le das: contratos claros, descripciones precisas, validación estricta y errores que expliquen cómo corregirse.
 """
 results = [
   "Preguntas de negocio respondidas en segundos con datos reales.",
@@ -799,12 +785,12 @@ kicker = "VapoSelección · Automatización"
 category = "automatizacion"
 filters = ["automatizacion", "infra"]
 status = "En producción"
-period = "2025 – actualidad"
+period = "2025 - actualidad"
 role = "Arquitectura, desarrollo y operación"
 context = "Operaciones internas de toda la empresa"
-summary = "n8n autoalojado en Docker como columna vertebral de la operativa: más de 10 workflows en producción, formularios internos para el equipo y microservicios FastAPI detrás de Traefik para el procesado pesado de datos."
+summary = "n8n autoalojado en Docker como columna vertebral de la operativa: más de 10 workflows en producción, formularios internos para el equipo y microservicios FastAPI detrás de Nginx para el procesado pesado de datos."
 tagline = "Que las tareas repetitivas dejen de depender de alguien: formularios, cron, webhooks y servicios propios trabajando juntos."
-tags = ["n8n", "FastAPI", "Python", "Pandas", "Docker", "Traefik", "Google Workspace"]
+tags = ["n8n", "FastAPI", "Python", "Pandas", "Docker", "Nginx", "Google Workspace"]
 confidential = true
 problem = """
 Muchas tareas del día a día eran manuales y repetitivas: limpiar ficheros de proveedores, generar plantillas, mover datos entre Amazon, hojas de cálculo y email, enviar informes.
@@ -812,7 +798,7 @@ Muchas tareas del día a día eran manuales y repetitivas: limpiar ficheros de p
 Las herramientas SaaS de automatización se quedaban cortas (o resultaban caras) en cuanto había que procesar ficheros grandes o aplicar lógica de negocio específica.
 """
 solution = """
-Desplegué **n8n autoalojado** en Docker como orquestador central y lo complementé con **microservicios FastAPI** propios, publicados detrás de **Traefik**, para todo lo que no debe hacerse en nodos visuales: limpieza de Excel, generación de ficheros y transformaciones con Pandas.
+Desplegué **n8n autoalojado** en Docker como orquestador central y lo complementé con **microservicios FastAPI** propios, publicados detrás de **Nginx**, para todo lo que no debe hacerse en nodos visuales: limpieza de Excel, generación de ficheros y transformaciones con Pandas.
 
 Reparto de responsabilidades claro: n8n se encarga de disparadores, integraciones, reintentos y notificaciones; Python, del cálculo.
 """
@@ -880,7 +866,7 @@ why = "APIs Python rápidas, tipadas y con documentación OpenAPI automática."
 name = "Pandas · openpyxl"
 why = "Lectura, limpieza y escritura de Excel."
 [[projects.stack]]
-name = "Traefik"
+name = "Nginx"
 why = "Exposición de los servicios con TLS y enrutado por dominio."
 [[projects.stack]]
 name = "Google Sheets · Drive"
@@ -946,7 +932,7 @@ kicker = "VapoSelección · Tienda online"
 category = "ecommerce"
 filters = ["ecommerce"]
 status = "En producción"
-period = "2025 – actualidad"
+period = "2025 - actualidad"
 role = "Desarrollo front y back de la tienda"
 context = "PrestaShop 1.7.8 multi-tienda"
 summary = "Personalización profunda de la plantilla y módulos PHP a medida sobre PrestaShop 1.7 multi-tienda: bloques de top ventas por categoría, componentes corporativos y consultas SQL optimizadas."
@@ -1104,7 +1090,7 @@ Desarrollé un script **Python** parametrizable que lee la tarifa del proveedor,
 El resultado es un **Excel segmentado** por tramos de margen y coloreado con umbrales configurables, para que compras vea de un vistazo qué priorizar. La parte de limpieza de ficheros se expuso también como microservicio para usarla desde n8n.
 """
 learnings = """
-Un script con buenos valores por defecto y una salida pensada para quien la va a leer (colores, hojas separadas, orden) se usa; uno que obliga a saber Python, no.
+Si un script tiene buenos valores por defecto y una salida pensada para quien la va a leer (colores, hojas separadas, orden), la gente lo usa. Si para usarlo hay que saber Python, acaba olvidado.
 """
 results = [
   "Decisiones de pricing con un criterio único y repetible.",
@@ -1228,7 +1214,7 @@ period = "2026"
 role = "Responsable técnico del proyecto (con partner externo)"
 context = "Web, Amazon y 3 tiendas físicas"
 summary = "Coordinación técnica de la implantación de Odoo con un partner externo para centralizar el stock de web, Amazon y 3 tiendas físicas, eliminar sincronizaciones manuales, unificar la contabilidad y cumplir con Verifactu."
-tagline = "Una sola fuente de verdad para stock, ventas y contabilidad en todos los canales de venta."
+tagline = "Stock, ventas y contabilidad de todos los canales de venta en un mismo sistema."
 tags = ["Odoo", "ERP", "PrestaShop", "TPV", "Verifactu", "Python", "Integraciones"]
 confidential = true
 problem = """
@@ -1310,7 +1296,7 @@ why = "Scripts y flujos de integración y validación de datos."
 
 [[projects.challenges]]
 title = "Calidad de los datos maestros"
-text = "Un ERP es tan bueno como sus datos: referencias duplicadas, costes desactualizados y productos inactivos se depuran antes de migrar."
+text = "Si los datos entran mal en el ERP, salen mal. Antes de migrar hay que depurar referencias duplicadas, costes desactualizados y productos inactivos."
 [[projects.challenges]]
 title = "Coordinación con el partner"
 text = "Traducir los procesos reales de tienda, almacén y Amazon a requisitos concretos para el partner y validar cada entrega con pruebas."

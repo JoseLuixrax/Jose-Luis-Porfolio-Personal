@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sistema de gestión FBA para Amazon · José Luis Pérez Lara</title>
-  <meta name="description" content="Automatización end-to-end de la operativa FBA en 4 marketplaces: reportes vía SP-API, cálculo de reposición, inventario envejecido por tramos y etiquetas FNSKU generadas sin intervención manual.">
+  <meta name="description" content="Automatización completa de la operativa FBA en 4 marketplaces: reportes vía SP-API, cálculo de reposición, inventario envejecido por tramos y etiquetas FNSKU generadas sin intervención manual.">
   <meta name="author" content="José Luis Pérez Lara">
   <link rel="canonical" href="https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/proyectos/sistema-fba-amazon.html">
   <meta property="og:type" content="article">
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="José Luis Pérez Lara">
   <meta property="og:title" content="Sistema de gestión FBA para Amazon">
-  <meta property="og:description" content="Automatización end-to-end de la operativa FBA en 4 marketplaces: reportes vía SP-API, cálculo de reposición, inventario envejecido por tramos y etiquetas FNSKU generadas sin intervención manual.">
+  <meta property="og:description" content="Automatización completa de la operativa FBA en 4 marketplaces: reportes vía SP-API, cálculo de reposición, inventario envejecido por tramos y etiquetas FNSKU generadas sin intervención manual.">
   <meta property="og:url" content="https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/proyectos/sistema-fba-amazon.html">
   <meta property="og:image" content="https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/assets/img/og-cover.png">
   <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
         <h1>Sistema de gestión FBA para Amazon</h1>
         <p class="p-hero__tagline">De descargar CSV a mano a un sistema que calcula qué enviar a Amazon, qué liquidar y genera las etiquetas por sí solo.</p>
         
-        <dl class="facts"><div class="fact"><dt class="label">Rol</dt><dd>Diseño, desarrollo y mantenimiento</dd></div><div class="fact"><dt class="label">Contexto</dt><dd>E-commerce multicanal · 4 marketplaces</dd></div><div class="fact"><dt class="label">Periodo</dt><dd>2025 – actualidad</dd></div><div class="fact"><dt class="label">Estado</dt><dd><span class="status">En producción</span></dd></div></dl>
+        <dl class="facts"><div class="fact"><dt class="label">Rol</dt><dd>Diseño, desarrollo y mantenimiento</dd></div><div class="fact"><dt class="label">Contexto</dt><dd>E-commerce multicanal · 4 marketplaces</dd></div><div class="fact"><dt class="label">Periodo</dt><dd>2025 - actualidad</dd></div><div class="fact"><dt class="label">Estado</dt><dd><span class="status">En producción</span></dd></div></dl>
         <div class="kpis"><div class="kpi"><div class="kpi__value">4</div><div class="kpi__label">marketplaces automatizados: España, Francia, Alemania e Italia</div></div><div class="kpi"><div class="kpi__value">30 → 270+</div><div class="kpi__label">días: segmentación del inventario envejecido por tramos</div></div><div class="kpi"><div class="kpi__value">1 formulario</div><div class="kpi__label">para generar las etiquetas FNSKU de un envío completo</div></div></div>
         <div class="p-stack"><span class="label">Stack</span><span class="tech-line">Python · Amazon SP-API · n8n · Pandas · Google Sheets · Docker</span></div>
       </div>
@@ -77,11 +77,11 @@
         </section>
         <section class="p-section" id="stack">
           <h2><span class="num">05</span>Stack y por qué</h2>
-          <div class="tech"><div class="tech__row"><span class="tech__name">Amazon SP-API</span><span class="tech__why">Reports API, FBA Inventory y Product Labels: la fuente de verdad de Amazon, sin scraping ni exportaciones manuales.</span></div><div class="tech__row"><span class="tech__name">n8n</span><span class="tech__why">Orquestación, esperas asíncronas, reintentos y formularios para el equipo.</span></div><div class="tech__row"><span class="tech__name">Python + Pandas</span><span class="tech__why">Transformaciones de datos que en nodos visuales serían frágiles y difíciles de mantener.</span></div><div class="tech__row"><span class="tech__name">Google Sheets / Drive</span><span class="tech__why">La interfaz que el equipo ya conoce para revisar y ajustar las propuestas.</span></div><div class="tech__row"><span class="tech__name">Docker</span><span class="tech__why">Todo corre en contenedores en el VPS propio de la empresa.</span></div></div>
+          <div class="tech"><div class="tech__row"><span class="tech__name">Amazon SP-API</span><span class="tech__why">Reports API, FBA Inventory y Product Labels: los datos salen directamente de Amazon, sin scraping ni exportaciones manuales.</span></div><div class="tech__row"><span class="tech__name">n8n</span><span class="tech__why">Orquestación, esperas asíncronas, reintentos y formularios para el equipo.</span></div><div class="tech__row"><span class="tech__name">Python + Pandas</span><span class="tech__why">Transformaciones de datos que en nodos visuales serían frágiles y difíciles de mantener.</span></div><div class="tech__row"><span class="tech__name">Google Sheets / Drive</span><span class="tech__why">La interfaz que el equipo ya conoce para revisar y ajustar las propuestas.</span></div><div class="tech__row"><span class="tech__name">Docker</span><span class="tech__why">Todo corre en contenedores en el VPS propio de la empresa.</span></div></div>
         </section>
         <section class="p-section" id="retos">
           <h2><span class="num">06</span>Retos técnicos</h2>
-          <ol class="challenges"><li class="challenge"><div><h3>Reportes asíncronos</h3><p>Los reportes de SP-API no son inmediatos: hay que crearlos, sondear su estado y descargar el documento. Implementé esperas con control de estados <code>DONE</code> / <code>FATAL</code> / <code>CANCELLED</code> por marketplace para que un país lento no bloquee al resto.</p></div></li><li class="challenge"><div><h3>Documentos comprimidos o planos</h3><p>Según el tipo de reporte y el país, el documento llega comprimido en GZIP o en texto plano. El flujo lee el algoritmo de compresión de la respuesta y descomprime solo cuando hace falta.</p></div></li><li class="challenge"><div><h3>Cuatro marketplaces, un solo flujo</h3><p>En vez de duplicar flujos por país, cada marketplace se parametriza (ID, plantilla, destino) y un switch enruta el procesado. Añadir un país nuevo es configuración, no código.</p></div></li></ol>
+          <ol class="challenges"><li class="challenge"><div><h3>Reportes asíncronos</h3><p>Los reportes de SP-API no son inmediatos: hay que crearlos, sondear su estado y descargar el documento. Implementé esperas con control de estados <code>DONE</code> / <code>FATAL</code> / <code>CANCELLED</code> por marketplace para que un país lento no bloquee al resto.</p></div></li><li class="challenge"><div><h3>Documentos comprimidos o planos</h3><p>Según el tipo de reporte y el país, el documento llega comprimido en GZIP o en texto plano. El flujo lee el algoritmo de compresión de la respuesta y descomprime solo cuando hace falta.</p></div></li><li class="challenge"><div><h3>Cuatro marketplaces, un solo flujo</h3><p>En vez de duplicar flujos por país, cada marketplace se parametriza (ID, plantilla, destino) y un switch enruta el procesado. Para añadir un país nuevo basta con configurarlo, sin tocar código.</p></div></li></ol>
         </section>
         <section class="p-section" id="resultados">
           <h2><span class="num">07</span>Resultados</h2>
@@ -139,7 +139,7 @@ def download_report(token: str, report_type: str, marketplace_id: str) -&gt; str
         </section>
         <section class="p-section" id="aprendizajes">
           <h2><span class="num">09</span>Lo que aprendí</h2>
-          <div class="prose"><p>Diseñar para el fallo: en integraciones con APIs externas lo normal es que algo falle (reportes cancelados, ficheros vacíos, límites de peticiones). Notificar con contexto claro vale más que reintentar a ciegas, y es lo que hace que el equipo confíe en la automatización.</p></div>
+          <div class="prose"><p>En integraciones con APIs externas lo normal es que algo falle tarde o temprano (reportes cancelados, ficheros vacíos, límites de peticiones). Avisar con un mensaje que explique qué ha pasado sirve más que reintentar a ciegas, y es lo que hace que el equipo se fíe de la automatización.</p></div>
         </section>
         </article>
       </div>

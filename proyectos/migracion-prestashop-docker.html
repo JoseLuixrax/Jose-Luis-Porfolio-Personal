@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Migración de PrestaShop a contenedores en VPS propio · José Luis Pérez Lara</title>
-  <meta name="description" content="De un hosting compartido con Plesk a un VPS Ubuntu con Docker Compose, Traefik y HTTPS automático. PrestaShop 1.7 multi-tienda, n8n y microservicios bajo un mismo stack reproducible.">
+  <meta name="description" content="De un hosting compartido con Plesk a un VPS Ubuntu con Docker Compose, Nginx y HTTPS automático. PrestaShop 1.7 multi-tienda, n8n y microservicios bajo un mismo stack reproducible.">
   <meta name="author" content="José Luis Pérez Lara">
   <link rel="canonical" href="https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/proyectos/migracion-prestashop-docker.html">
   <meta property="og:type" content="article">
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="José Luis Pérez Lara">
   <meta property="og:title" content="Migración de PrestaShop a contenedores en VPS propio">
-  <meta property="og:description" content="De un hosting compartido con Plesk a un VPS Ubuntu con Docker Compose, Traefik y HTTPS automático. PrestaShop 1.7 multi-tienda, n8n y microservicios bajo un mismo stack reproducible.">
+  <meta property="og:description" content="De un hosting compartido con Plesk a un VPS Ubuntu con Docker Compose, Nginx y HTTPS automático. PrestaShop 1.7 multi-tienda, n8n y microservicios bajo un mismo stack reproducible.">
   <meta property="og:url" content="https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/proyectos/migracion-prestashop-docker.html">
   <meta property="og:image" content="https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/assets/img/og-cover.png">
   <meta name="twitter:card" content="summary_large_image">
@@ -44,9 +44,9 @@
         <h1>Migración de PrestaShop a contenedores en VPS propio</h1>
         <p class="p-hero__tagline">Llevar la tienda principal y todo el ecosistema de automatización a una infraestructura propia, reproducible y bajo control.</p>
         
-        <dl class="facts"><div class="fact"><dt class="label">Rol</dt><dd>Diseño y ejecución completa de la migración</dd></div><div class="fact"><dt class="label">Contexto</dt><dd>Tienda principal + ecosistema de automatización</dd></div><div class="fact"><dt class="label">Periodo</dt><dd>2025 – 2026</dd></div><div class="fact"><dt class="label">Estado</dt><dd><span class="status">En producción</span></dd></div></dl>
-        <div class="kpis"><div class="kpi"><div class="kpi__value">12 vCPU · 24 GB</div><div class="kpi__label">VPS propio con 720 GB NVMe frente a un hosting compartido</div></div><div class="kpi"><div class="kpi__value">PHP 7.4</div><div class="kpi__label">fijado en imagen para garantizar compatibilidad con PrestaShop 1.7.8</div></div><div class="kpi"><div class="kpi__value">HTTPS auto</div><div class="kpi__label">certificados Let&#x27;s Encrypt emitidos y renovados por Traefik</div></div></div>
-        <div class="p-stack"><span class="label">Stack</span><span class="tech-line">Docker · Docker Compose · Traefik · PrestaShop 1.7 · PHP 7.4 · MariaDB · Ubuntu 22.04</span></div>
+        <dl class="facts"><div class="fact"><dt class="label">Rol</dt><dd>Diseño y ejecución completa de la migración</dd></div><div class="fact"><dt class="label">Contexto</dt><dd>Tienda principal + ecosistema de automatización</dd></div><div class="fact"><dt class="label">Periodo</dt><dd>2025 - 2026</dd></div><div class="fact"><dt class="label">Estado</dt><dd><span class="status">En producción</span></dd></div></dl>
+        <div class="kpis"><div class="kpi"><div class="kpi__value">12 vCPU · 24 GB</div><div class="kpi__label">VPS propio con 720 GB NVMe frente a un hosting compartido</div></div><div class="kpi"><div class="kpi__value">PHP 7.4</div><div class="kpi__label">fijado en imagen para garantizar compatibilidad con PrestaShop 1.7.8</div></div><div class="kpi"><div class="kpi__value">HTTPS auto</div><div class="kpi__label">certificados Let&#x27;s Encrypt emitidos y renovados con Certbot</div></div></div>
+        <div class="p-stack"><span class="label">Stack</span><span class="tech-line">Docker · Docker Compose · Nginx · PrestaShop 1.7 · PHP 7.4 · MariaDB · Ubuntu 22.04</span></div>
       </div>
     </header>
 
@@ -64,24 +64,24 @@
         </section>
         <section class="p-section" id="solucion">
           <h2><span class="num">02</span>La solución</h2>
-          <div class="prose"><p>Diseñé una plataforma sobre un <strong>VPS Ubuntu 22.04</strong> (12 vCPU, 24 GB de RAM y 720 GB NVMe) donde cada servicio vive en su contenedor y se define en <strong>Docker Compose</strong>. <strong>Traefik</strong> actúa como reverse proxy único: enruta por dominio y emite y renueva los certificados TLS de forma automática.</p>
+          <div class="prose"><p>Diseñé una plataforma sobre un <strong>VPS Ubuntu 22.04</strong> (12 vCPU, 24 GB de RAM y 720 GB NVMe) donde cada servicio vive en su contenedor y se define en <strong>Docker Compose</strong>. <strong>Nginx</strong> actúa como reverse proxy único: enruta cada dominio a su contenedor y termina TLS con certificados Let&#x27;s Encrypt que Certbot renueva de forma automática.</p>
 <p>Migré <strong>PrestaShop 1.7.8 multi-tienda</strong> con su base de datos <strong>MariaDB</strong>, ficheros e imágenes, manteniendo <strong>PHP 7.4</strong> en una imagen fijada para no romper módulos, y dejé n8n y los microservicios en el mismo stack con redes internas separadas: la base de datos nunca queda expuesta a Internet.</p></div>
         </section>
         <section class="p-section" id="arquitectura">
           <h2><span class="num">03</span>Arquitectura y flujo</h2>
-          <ol class="flow"><li class="flow__step"><b>Internet</b><span>Tráfico HTTPS a la tienda y a las herramientas internas</span></li><li class="flow__arrow" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></li><li class="flow__step"><b>Traefik</b><span>Reverse proxy, TLS automático y enrutado por labels</span></li><li class="flow__arrow" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></li><li class="flow__step"><b>PrestaShop</b><span>PHP 7.4 en contenedor, multi-tienda</span></li><li class="flow__arrow" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></li><li class="flow__step"><b>MariaDB</b><span>Red interna, sin puertos publicados</span></li><li class="flow__arrow" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></li><li class="flow__step"><b>Servicios</b><span>n8n y microservicios FastAPI en el mismo stack</span></li></ol>
+          <ol class="flow"><li class="flow__step"><b>Internet</b><span>Tráfico HTTPS a la tienda y a las herramientas internas</span></li><li class="flow__arrow" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></li><li class="flow__step"><b>Nginx</b><span>Reverse proxy, terminación TLS y enrutado por dominio</span></li><li class="flow__arrow" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></li><li class="flow__step"><b>PrestaShop</b><span>PHP 7.4 en contenedor, multi-tienda</span></li><li class="flow__arrow" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></li><li class="flow__step"><b>MariaDB</b><span>Red interna, sin puertos publicados</span></li><li class="flow__arrow" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg></li><li class="flow__step"><b>Servicios</b><span>n8n y microservicios FastAPI en el mismo stack</span></li></ol>
         </section>
         <section class="p-section" id="funcionalidades">
           <h2><span class="num">04</span>Funcionalidades clave</h2>
-          <div class="features"><div class="feature"><h3>Infraestructura como código</h3><p>Todo el stack descrito en <code>docker-compose.yml</code>: levantar el entorno en otra máquina es clonar, configurar el <code>.env</code> y arrancar.</p></div><div class="feature"><h3>TLS sin mantenimiento</h3><p>Certificados emitidos y renovados por Traefik. Publicar un subdominio nuevo es añadir un par de labels al servicio.</p></div><div class="feature"><h3>Aislamiento por redes</h3><p>La base de datos solo es accesible desde la red interna de la aplicación; únicamente Traefik publica puertos al exterior.</p></div><div class="feature"><h3>Versiones fijadas</h3><p>PHP 7.4 con las extensiones que necesita PrestaShop (gd, intl, zip, pdo_mysql, opcache) definido en la imagen.</p></div><div class="feature"><h3>Datos persistentes</h3><p>Imágenes de producto, módulos, temas y datos de MariaDB en volúmenes, independientes del ciclo de vida de los contenedores.</p></div><div class="feature"><h3>Operación en producción</h3><p>Monitorización básica, logs por contenedor y resolución de incidencias sobre el propio servidor.</p></div></div>
+          <div class="features"><div class="feature"><h3>Infraestructura como código</h3><p>Todo el stack descrito en <code>docker-compose.yml</code>: levantar el entorno en otra máquina es clonar, configurar el <code>.env</code> y arrancar.</p></div><div class="feature"><h3>TLS sin mantenimiento</h3><p>Certificados emitidos y renovados automáticamente con Certbot. Publicar un subdominio nuevo es añadir su <code>server</code> en Nginx y emitir el certificado.</p></div><div class="feature"><h3>Aislamiento por redes</h3><p>La base de datos solo es accesible desde la red interna de la aplicación; únicamente Nginx publica puertos al exterior.</p></div><div class="feature"><h3>Versiones fijadas</h3><p>PHP 7.4 con las extensiones que necesita PrestaShop (gd, intl, zip, pdo_mysql, opcache) definido en la imagen.</p></div><div class="feature"><h3>Datos persistentes</h3><p>Imágenes de producto, módulos, temas y datos de MariaDB en volúmenes, independientes del ciclo de vida de los contenedores.</p></div><div class="feature"><h3>Operación en producción</h3><p>Monitorización básica, logs por contenedor y resolución de incidencias sobre el propio servidor.</p></div></div>
         </section>
         <section class="p-section" id="stack">
           <h2><span class="num">05</span>Stack y por qué</h2>
-          <div class="tech"><div class="tech__row"><span class="tech__name">Ubuntu 22.04 LTS</span><span class="tech__why">Base estable y con soporte largo para el host.</span></div><div class="tech__row"><span class="tech__name">Docker + Compose</span><span class="tech__why">Entornos reproducibles, despliegues predecibles y servicios aislados.</span></div><div class="tech__row"><span class="tech__name">Traefik</span><span class="tech__why">Reverse proxy con descubrimiento automático de servicios y certificados ACME.</span></div><div class="tech__row"><span class="tech__name">MariaDB</span><span class="tech__why">Compatible con el dump original y con buen rendimiento en consultas multi-tienda.</span></div><div class="tech__row"><span class="tech__name">PrestaShop 1.7.8 / PHP 7.4</span><span class="tech__why">Mantener la versión evitó tener que migrar módulos en paralelo a la infraestructura.</span></div></div>
+          <div class="tech"><div class="tech__row"><span class="tech__name">Ubuntu 22.04 LTS</span><span class="tech__why">Base estable y con soporte largo para el host.</span></div><div class="tech__row"><span class="tech__name">Docker + Compose</span><span class="tech__why">Entornos reproducibles, despliegues predecibles y servicios aislados.</span></div><div class="tech__row"><span class="tech__name">Nginx</span><span class="tech__why">Reverse proxy maduro y eficiente, con control fino sobre virtual hosts, cabeceras y terminación TLS.</span></div><div class="tech__row"><span class="tech__name">MariaDB</span><span class="tech__why">Compatible con el dump original y con buen rendimiento en consultas multi-tienda.</span></div><div class="tech__row"><span class="tech__name">PrestaShop 1.7.8 / PHP 7.4</span><span class="tech__why">Mantener la versión evitó tener que migrar módulos en paralelo a la infraestructura.</span></div></div>
         </section>
         <section class="p-section" id="retos">
           <h2><span class="num">06</span>Retos técnicos</h2>
-          <ol class="challenges"><li class="challenge"><div><h3>Multi-tienda y dominios</h3><p>PrestaShop guarda los dominios de cada tienda en base de datos (<code>ps_shop_url</code> y configuración). Tras importar el dump hay que ajustar dominios y rutas, y regenerar la caché para que cada tienda resuelva bien detrás del proxy.</p></div></li><li class="challenge"><div><h3>HTTPS detrás de un reverse proxy</h3><p>Con Traefik terminando TLS, PrestaShop recibe tráfico HTTP interno. Hay que respetar las cabeceras <code>X-Forwarded-Proto</code> para evitar bucles de redirección y contenido mixto.</p></div></li><li class="challenge"><div><h3>Corte con la mínima parada</h3><p>Sincronización previa de ficheros con rsync, TTL de DNS reducido con antelación y, en la ventana de cambio, último volcado de la base de datos más el delta de ficheros.</p></div></li><li class="challenge"><div><h3>Permisos y cachés</h3><p>Propietarios correctos (<code>www-data</code>) en <code>var/cache</code>, <code>img</code>, <code>upload</code> y módulos, y limpieza de las cachés de Smarty y Symfony al cambiar de entorno.</p></div></li></ol>
+          <ol class="challenges"><li class="challenge"><div><h3>Multi-tienda y dominios</h3><p>PrestaShop guarda los dominios de cada tienda en base de datos (<code>ps_shop_url</code> y configuración). Tras importar el dump hay que ajustar dominios y rutas, y regenerar la caché para que cada tienda resuelva bien detrás del proxy.</p></div></li><li class="challenge"><div><h3>HTTPS detrás de un reverse proxy</h3><p>Con Nginx terminando TLS, PrestaShop recibe tráfico HTTP interno. Hay que propagar y respetar las cabeceras <code>X-Forwarded-Proto</code> para evitar bucles de redirección y contenido mixto.</p></div></li><li class="challenge"><div><h3>Corte con la mínima parada</h3><p>Sincronización previa de ficheros con rsync, TTL de DNS reducido con antelación y, en la ventana de cambio, último volcado de la base de datos más el delta de ficheros.</p></div></li><li class="challenge"><div><h3>Permisos y cachés</h3><p>Propietarios correctos (<code>www-data</code>) en <code>var/cache</code>, <code>img</code>, <code>upload</code> y módulos, y limpieza de las cachés de Smarty y Symfony al cambiar de entorno.</p></div></li></ol>
         </section>
         <section class="p-section" id="resultados">
           <h2><span class="num">07</span>Resultados</h2>
@@ -92,21 +92,13 @@
           <div class="code">
             <div class="code__bar"><span>docker-compose.yml (extracto)</span><button class="code__copy" type="button"><svg class="icon" aria-hidden="true"><use href="#i-copy"></use></svg><span>Copiar</span></button></div>
             <pre><code class="language-yaml">services:
-  traefik:
-    image: traefik:v3.1
-    command:
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --entrypoints.web.address=:80
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      - --entrypoints.websecure.address=:443
-      - --certificatesresolvers.le.acme.tlschallenge=true
-      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
-      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
-    ports: [&quot;80:80&quot;, &quot;443:443&quot;]
+  nginx:
+    image: nginx:1.26-alpine
+    restart: unless-stopped
+    ports: [&quot;80:80&quot;, &quot;443:443&quot;]    # el único servicio expuesto
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./letsencrypt:/letsencrypt
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro      # un server por dominio
+      - /etc/letsencrypt:/etc/letsencrypt:ro     # certificados de Certbot
     networks: [proxy]
 
   prestashop:
@@ -115,13 +107,7 @@
     env_file: .env
     volumes:
       - ./shop:/var/www/html
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=proxy
-      - traefik.http.routers.shop.rule=Host(`${SHOP_DOMAIN}`)
-      - traefik.http.routers.shop.entrypoints=websecure
-      - traefik.http.routers.shop.tls.certresolver=le
-    networks: [proxy, backend]
+    networks: [proxy, backend]     # Nginx le llega por la red proxy
 
   mariadb:
     image: mariadb:10.6

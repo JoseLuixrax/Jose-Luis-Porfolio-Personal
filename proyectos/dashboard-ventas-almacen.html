@@ -42,7 +42,7 @@
         <a class="back" href="../index.html#proyectos"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg> Proyectos</a>
         <p class="label">Datos &amp; BI · VapoSelección · Datos</p>
         <h1>Dashboard de ventas, márgenes y rotación de almacén</h1>
-        <p class="p-hero__tagline">Una única fuente de verdad para responder «¿cómo vamos?»: ventas, margen real y qué stock está parado, por tienda y por almacén.</p>
+        <p class="p-hero__tagline">Un solo sitio para ver cómo vamos: ventas, margen real y qué stock está parado, por tienda y por almacén.</p>
         
         <dl class="facts"><div class="fact"><dt class="label">Rol</dt><dd>Diseño y desarrollo completo</dd></div><div class="fact"><dt class="label">Contexto</dt><dd>Tienda online + 3 tiendas físicas</dd></div><div class="fact"><dt class="label">Periodo</dt><dd>2026</dd></div><div class="fact"><dt class="label">Estado</dt><dd><span class="status">En producción</span></dd></div></dl>
         <div class="kpis"><div class="kpi"><div class="kpi__value">5 vistas</div><div class="kpi__label">tienda online, Medina Azahara, Arcángel, Pozoblanco y global</div></div><div class="kpi"><div class="kpi__value">4 tramos</div><div class="kpi__label">de rotación: vivo, lento, frío y muerto</div></div><div class="kpi"><div class="kpi__value">API JSON</div><div class="kpi__label">los KPIs disponibles para automatizaciones e IA</div></div></div>
@@ -60,7 +60,7 @@
         <section class="p-section" id="problema">
           <h2><span class="num">01</span>El problema</h2>
           <div class="prose"><p>Las cifras de negocio estaban repartidas: ventas online en PrestaShop, ventas de tienda física en otro sistema, costes en el ERP y Amazon por separado.</p>
-<p>Responder preguntas sencillas — cuánto vendimos la semana pasada por país, qué margen real dejó cada tienda o cuánto dinero hay inmovilizado en stock que no rota — exigía exportar y cruzar hojas de cálculo cada vez.</p></div>
+<p>Para responder preguntas sencillas, como cuánto vendimos la semana pasada por país, qué margen real dejó cada tienda o cuánto dinero hay inmovilizado en stock que no rota, había que exportar y cruzar hojas de cálculo cada vez.</p></div>
         </section>
         <section class="p-section" id="solucion">
           <h2><span class="num">02</span>La solución</h2>
@@ -73,7 +73,7 @@
         </section>
         <section class="p-section" id="funcionalidades">
           <h2><span class="num">04</span>Funcionalidades clave</h2>
-          <div class="features"><div class="feature"><h3>Ventas por país y canal</h3><p>Ventas totales con desglose España, Alemania, Portugal y resto; número de pedidos, clientes nuevos y ticket medio con y sin IVA.</p></div><div class="feature"><h3>Margen bruto real</h3><p>Calculado sobre el coste real de cada producto vendido, no sobre un porcentaje estimado, por tienda y rango de fechas.</p></div><div class="feature"><h3>Rotación de almacén</h3><p>Stock clasificado por días sin venta — vivo (0–90), lento (91–120), frío (121–180) y muerto (más de 180) — con su valor a coste.</p></div><div class="feature"><h3>Lógica de almacén central</h3><p>En el almacén central cuenta la última venta en cualquier canal (tiendas, web y Amazon); en cada tienda, solo sus propias ventas.</p></div><div class="feature"><h3>Top de stock parado</h3><p>Ranking de productos fríos y muertos por valor inmovilizado para priorizar liquidaciones y traspasos entre tiendas.</p></div><div class="feature"><h3>Extracción resiliente</h3><p>La API lee los valores por id de elemento y por pares etiqueta/valor, así que sigue funcionando aunque cambie el diseño del panel.</p></div></div>
+          <div class="features"><div class="feature"><h3>Ventas por país y canal</h3><p>Ventas totales con desglose España, Alemania, Portugal y resto; número de pedidos, clientes nuevos y ticket medio con y sin IVA.</p></div><div class="feature"><h3>Margen bruto real</h3><p>Calculado sobre el coste real de cada producto vendido, no sobre un porcentaje estimado, por tienda y rango de fechas.</p></div><div class="feature"><h3>Rotación de almacén</h3><p>Stock clasificado por días sin venta, con su valor a coste: vivo (0-90), lento (91-120), frío (121-180) y muerto (más de 180).</p></div><div class="feature"><h3>Lógica de almacén central</h3><p>En el almacén central cuenta la última venta en cualquier canal (tiendas, web y Amazon); en cada tienda, solo sus propias ventas.</p></div><div class="feature"><h3>Top de stock parado</h3><p>Ranking de productos fríos y muertos por valor inmovilizado para priorizar liquidaciones y traspasos entre tiendas.</p></div><div class="feature"><h3>Extracción resiliente</h3><p>La API lee los valores por id de elemento y por pares etiqueta/valor, así que sigue funcionando aunque cambie el diseño del panel.</p></div></div>
         </section>
         <section class="p-section" id="stack">
           <h2><span class="num">05</span>Stack y por qué</h2>
@@ -122,7 +122,7 @@ GROUP BY p.id_product, pl.name;</code></pre>
         </section>
         <section class="p-section" id="aprendizajes">
           <h2><span class="num">09</span>Lo que aprendí</h2>
-          <div class="prose"><p>Un dashboard vale tanto como la confianza en sus números. Marcar explícitamente cuándo un dato está incompleto (por ejemplo, si el ERP no ha respondido) es más importante que cualquier gráfico.</p></div>
+          <div class="prose"><p>Si nadie se fía de los números, el dashboard no sirve de nada. Por eso me parece más importante marcar cuándo un dato está incompleto (por ejemplo, si el ERP no ha respondido) que cualquier gráfico.</p></div>
         </section>
         </article>
       </div>
