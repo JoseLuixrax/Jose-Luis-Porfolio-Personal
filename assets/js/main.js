@@ -4,6 +4,11 @@
 
   var root = document.documentElement;
 
+  /* Textos de la interfaz según el idioma de la página */
+  var TEXT = root.lang === "en"
+    ? { copy: "Copy", copied: "Copied", emailCopied: "Email copied to clipboard" }
+    : { copy: "Copiar", copied: "Copiado", emailCopied: "Email copiado al portapapeles" };
+
   function store(key, value) {
     try {
       if (value === undefined) return localStorage.getItem(key);
@@ -85,7 +90,7 @@
       var feedback = document.querySelector(btn.getAttribute("data-feedback") || "");
       copy(btn.getAttribute("data-copy"), function () {
         if (feedback) {
-          feedback.textContent = "Email copiado al portapapeles";
+          feedback.textContent = TEXT.emailCopied;
           setTimeout(function () { feedback.textContent = ""; }, 2500);
         }
       });
@@ -99,8 +104,8 @@
     var label = btn.querySelector("span");
     btn.addEventListener("click", function () {
       copy(code.textContent, function () {
-        label.textContent = "Copiado";
-        setTimeout(function () { label.textContent = "Copiar"; }, 2000);
+        label.textContent = TEXT.copied;
+        setTimeout(function () { label.textContent = TEXT.copy; }, 2000);
       });
     });
   });

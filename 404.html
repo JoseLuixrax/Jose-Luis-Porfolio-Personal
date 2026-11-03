@@ -22,5 +22,17 @@
     <p>Puede que el enlace esté mal escrito o que el proyecto haya cambiado de dirección.</p>
     <a href="/Jose-Luis-Porfolio-Personal/">Volver al portfolio</a>
   </main>
+  <script>
+    /* En direcciones de la versión en inglés, la página se muestra en inglés */
+    if (/^\/Jose-Luis-Porfolio-Personal\/en(\/|$)/.test(location.pathname)) {
+      document.documentElement.lang = "en";
+      document.title = "Page not found · José Luis Pérez Lara";
+      document.querySelector("h1").textContent = "This page doesn't exist";
+      document.querySelector("p").textContent = "The link may be mistyped, or the project may have moved.";
+      var back = document.querySelector("a");
+      back.textContent = "Back to the portfolio";
+      back.href = "/Jose-Luis-Porfolio-Personal/en/";
+    }
+  </script>
 </body>
 </html>

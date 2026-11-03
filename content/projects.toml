@@ -3,8 +3,9 @@
 #  ---------------------------------------------------------------------------
 #  Edita este fichero y ejecuta:   python3 tools/build.py
 #  Se regeneran proyectos/*.html, las tarjetas de index.html y sitemap.xml.
+#  La versión en inglés está en content/projects.en.toml: actualízala también.
 #
-#  Texto con formato mínimo: **negrita** y `código`.
+#  Texto con formato mínimo: **negrita**, *cursiva* y `código`.
 #  Párrafos: separa con una línea en blanco.
 #  Iconos disponibles: ver tools/icons.py
 # =============================================================================

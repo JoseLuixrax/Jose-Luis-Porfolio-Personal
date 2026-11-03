@@ -77,6 +77,7 @@ h1, h2, h3, h4 { color: var(--text); font-weight: 600; }
 .icon-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-soft); display: grid; place-items: center; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
 .icon-btn:hover { border-color: var(--border-strong); color: var(--text); }
 .icon-btn .icon { width: 17px; height: 17px; }
+.lang-switch { font: 500 12px/1 var(--font-mono); letter-spacing: 0.04em; }
 .theme-toggle .i-moon { display: none; }
 :root[data-theme="dark"] .theme-toggle .i-moon { display: block; }
 :root[data-theme="dark"] .theme-toggle .i-sun { display: none; }

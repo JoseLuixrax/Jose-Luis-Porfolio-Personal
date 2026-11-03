@@ -3,6 +3,7 @@
 **Responsable Técnico E-commerce · Backend & Automation Engineer** · Córdoba, España · Remoto o reubicación
 
 🌐 **Portfolio:** https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/
+🇬🇧 **English version:** https://joseluixrax.github.io/Jose-Luis-Porfolio-Personal/en/
 💼 **LinkedIn:** [in/jose-luis-perez-lara](https://www.linkedin.com/in/jose-luis-perez-lara/)
 ✉️ **Email:** [joseluisperez232003@gmail.com](mailto:joseluisperez232003@gmail.com)
 
@@ -41,12 +42,15 @@ Cada proyecto tiene su propia página con el problema, la solución, la arquitec
 
 ## Cómo está hecho este portfolio
 
-Sitio estático sin frameworks ni dependencias en el navegador (HTML, CSS y JavaScript), publicado con **GitHub Pages**. Las páginas de proyecto se generan desde un único fichero de contenido con un script de Python sin dependencias externas.
+Sitio estático sin frameworks ni dependencias en el navegador (HTML, CSS y JavaScript), publicado con **GitHub Pages**, en español y en inglés. Las páginas de proyecto se generan desde los ficheros de contenido con un script de Python sin dependencias externas.
 
 ```
-├── index.html                 Portada (las tarjetas de proyecto se insertan al generar)
-├── proyectos/                 Páginas de cada proyecto (generadas, no editar a mano)
-├── content/projects.toml      ← Contenido de todos los proyectos: se edita aquí
+├── index.html                 Portada en español (las tarjetas de proyecto se insertan al generar)
+├── proyectos/                 Páginas de cada proyecto en español (generadas, no editar a mano)
+├── en/index.html              Portada en inglés (las tarjetas también se insertan al generar)
+├── en/projects/               Páginas de cada proyecto en inglés (generadas, no editar a mano)
+├── content/projects.toml      ← Contenido de los proyectos en español: se edita aquí
+├── content/projects.en.toml   ← Traducción al inglés de cada proyecto
 ├── tools/build.py             Generador: TOML → HTML + sitemap.xml
 ├── tools/icons.py             Iconos SVG del sitio
 └── assets/                    CSS, JS, imágenes y Prism (resaltado de código)
@@ -54,7 +58,7 @@ Sitio estático sin frameworks ni dependencias en el navegador (HTML, CSS y Java
 
 ### Añadir o editar un proyecto
 
-1. Edita `content/projects.toml` (cada proyecto es un bloque `[[projects]]`).
+1. Edita `content/projects.toml` (cada proyecto es un bloque `[[projects]]`) y su traducción en `content/projects.en.toml`, con el mismo `slug`. En inglés solo van los textos: categoría, filtros, etiquetas y código se heredan del español salvo que los redefinas. Si falta algún texto por traducir, el generador avisa y no genera nada.
 2. Genera el sitio:
    ```bash
    python3 tools/build.py      # Python 3.11+ (en 3.10: pip install tomli)
@@ -64,6 +68,8 @@ Sitio estático sin frameworks ni dependencias en el navegador (HTML, CSS y Java
    python3 -m http.server 8000   # http://localhost:8000
    ```
 4. Haz commit y push: GitHub Pages publica los cambios automáticamente.
+
+Los textos de la portada (sobre mí, experiencia, stack...) están directamente en `index.html` y `en/index.html`: si cambias uno, cambia también el otro.
 
 ### Publicación
 

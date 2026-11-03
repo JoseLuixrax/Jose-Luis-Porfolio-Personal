@@ -1,0 +1,1654 @@
+# =============================================================================
+#  Contenido del portfolio · versión en inglés
+#  ---------------------------------------------------------------------------
+#  Cada proyecto se enlaza con content/projects.toml por su slug. Aquí solo va
+#  lo que se traduce: lo que no aparezca (categoría, filtros, etiquetas, código
+#  del fragmento...) se toma de la versión en español.
+#
+#  Después de editar, ejecuta:   python3 tools/build.py
+#  Se regeneran en/projects/*.html y las tarjetas de en/index.html.
+#
+#  Texto con formato mínimo: **negrita**, *cursiva* y `código`.
+# =============================================================================
+
+[[categories]]
+id = "ecommerce"
+label = "E-commerce"
+
+[[categories]]
+id = "automatizacion"
+label = "Automation"
+
+[[categories]]
+id = "infra"
+label = "Infrastructure"
+
+[[categories]]
+id = "datos"
+label = "Data & BI"
+
+[[categories]]
+id = "ia"
+label = "Applied AI"
+
+[[categories]]
+id = "personal"
+label = "Personal project"
+
+
+# =============================================================================
+#  1 · FBA system
+# =============================================================================
+[[projects]]
+slug = "sistema-fba-amazon"
+title = "FBA management system for Amazon"
+kicker = "VapoSelección · Amazon FBA"
+status = "In production"
+period = "2025 - present"
+role = "Design, development and maintenance"
+context = "Multichannel e-commerce · 4 marketplaces"
+summary = "Full automation of FBA operations across 4 marketplaces: SP-API reports, replenishment calculation, aged inventory by age band and FNSKU labels generated with no manual work."
+tagline = "From downloading CSV files by hand to a system that works out what to send to Amazon and what to clear out, and generates the labels on its own."
+problem = """
+Amazon FBA operations in four countries relied on manual work: downloading reports from Seller Central, cross-referencing them in Excel to decide replenishment, eyeballing the inventory that hadn't sold in months, and preparing FNSKU labels and shipment templates one product at a time.
+
+It was slow, it depended on one specific person and it was easy to get quantities or marketplaces wrong. On top of that, stock that doesn't move in FBA generates **long-term storage fees**, so spotting it late costs money.
+"""
+solution = """
+I built a set of workflows on top of **Amazon SP-API**, orchestrated with **n8n** and backed by **Python** for data processing. Each workflow covers one part of the operation: replenishment, aged inventory, FNSKU labels and shipment templates.
+
+Scheduled processes run on their own and deliver the result by email or to Google Drive. The ones that need a human decision (which shipment to prepare, for which marketplace) are launched from an **internal form**, without touching code or Seller Central.
+"""
+learnings = """
+With external APIs, something will fail sooner or later (cancelled reports, empty files, rate limits). A message that explains what happened is worth more than retrying blindly, and it's what makes the team trust the automation.
+"""
+results = [
+  "Replenishment calculated on a schedule with real sales and stock data from each marketplace.",
+  "Visibility of aged inventory before it starts generating long-term storage fees.",
+  "FNSKU labels for a full shipment generated in minutes from a form.",
+  "The process no longer depends on one person: anyone on the team can run it.",
+]
+
+[[projects.kpis]]
+value = "4"
+label = "automated marketplaces: Spain, France, Germany and Italy"
+[[projects.kpis]]
+value = "30 → 270+"
+label = "days: aged inventory split into age bands"
+[[projects.kpis]]
+value = "1 form"
+label = "to generate the FNSKU labels for a full shipment"
+
+[[projects.flow]]
+title = "Trigger"
+text = "Scheduled cron or internal n8n form"
+[[projects.flow]]
+title = "LWA authentication"
+text = "Login with Amazon OAuth token refreshed on every run"
+[[projects.flow]]
+title = "Reports API"
+text = "Report created per marketplace, status polling and download"
+[[projects.flow]]
+title = "Python processing"
+text = "Sales and stock cross-check, replenishment and age bands"
+[[projects.flow]]
+title = "Delivery"
+text = "Excel file in Google Drive and an email summary for the team"
+
+[[projects.features]]
+title = "FBA replenishment"
+text = "Cross-checks FBA inventory against sales from the last 7 days to suggest quantities per SKU and marketplace, and leaves the updated file in Google Drive."
+[[projects.features]]
+title = "Aged inventory"
+text = "Splits stock by days without sales (30+, 60+, 90+, 180+ and 270+) and suggests liquidations before long-term storage fees kick in."
+[[projects.features]]
+title = "FNSKU labels"
+text = "Takes the shipment sheet, requests the product labels from SP-API, downloads the PDF ready for the thermal printer and sends it by email."
+[[projects.features]]
+title = "Shipment templates"
+text = "Generates the Amazon shipment template for the right marketplace, first checking that the sheet has every required column."
+[[projects.features]]
+title = "Margin in the decision"
+text = "Replenishment queries margin and supplier catalog sub-workflows so it doesn't restock products that aren't profitable."
+[[projects.features]]
+title = "Errors explained"
+text = "Reports in `FATAL` status, malformed sheets or missing columns trigger an email explaining what went wrong, instead of failing silently."
+
+[[projects.stack]]
+name = "Amazon SP-API"
+why = "Reports API, FBA Inventory and Product Labels: the data comes straight from Amazon, with no scraping or manual exports."
+[[projects.stack]]
+name = "n8n"
+why = "Orchestration, async waits, retries and forms for the team."
+[[projects.stack]]
+name = "Python + Pandas"
+why = "Data transformations that would be fragile and hard to maintain as visual nodes."
+[[projects.stack]]
+name = "Google Sheets / Drive"
+why = "The interface the team already knows for reviewing and adjusting the suggestions."
+[[projects.stack]]
+name = "Docker"
+why = "Everything runs in containers on the company's own VPS."
+
+[[projects.challenges]]
+title = "Asynchronous reports"
+text = "SP-API reports aren't instant: you have to create them, poll their status and download the document. I implemented waits that track `DONE` / `FATAL` / `CANCELLED` per marketplace so a slow country doesn't hold up the rest."
+[[projects.challenges]]
+title = "Compressed or plain documents"
+text = "Depending on the report type and the country, the document arrives GZIP-compressed or as plain text. The workflow reads the compression algorithm from the response and only decompresses when needed."
+[[projects.challenges]]
+title = "Four marketplaces, one workflow"
+text = "Instead of duplicating workflows per country, each marketplace is parameterized (ID, template, destination) and a switch routes the processing. Adding a new country only takes configuration, with no code changes."
+
+[projects.snippet]
+code = '''
+import gzip
+import time
+
+import requests
+
+SP_API = "https://sellingpartnerapi-eu.amazon.com"
+
+
+def lwa_token(client_id: str, client_secret: str, refresh_token: str) -> str:
+    r = requests.post("https://api.amazon.com/auth/o2/token", data={
+        "grant_type": "refresh_token",
+        "refresh_token": refresh_token,
+        "client_id": client_id,
+        "client_secret": client_secret,
+    }, timeout=30)
+    r.raise_for_status()
+    return r.json()["access_token"]
+
+
+def download_report(token: str, report_type: str, marketplace_id: str) -> str:
+    h = {"x-amz-access-token": token}
+    report_id = requests.post(f"{SP_API}/reports/2021-06-30/reports", headers=h, json={
+        "reportType": report_type,
+        "marketplaceIds": [marketplace_id],
+    }, timeout=30).json()["reportId"]
+
+    for wait in (15, 30, 60, 60, 120, 120, 300):  # progressive backoff
+        time.sleep(wait)
+        rep = requests.get(f"{SP_API}/reports/2021-06-30/reports/{report_id}",
+                           headers=h, timeout=30).json()
+        if rep["processingStatus"] == "DONE":
+            break
+        if rep["processingStatus"] in ("FATAL", "CANCELLED"):
+            raise RuntimeError(f"{report_type} [{marketplace_id}]: {rep['processingStatus']}")
+    else:
+        raise TimeoutError(f"Report {report_id} did not finish in time")
+
+    doc = requests.get(f"{SP_API}/reports/2021-06-30/documents/{rep['reportDocumentId']}",
+                       headers=h, timeout=30).json()
+    raw = requests.get(doc["url"], timeout=120).content
+    if doc.get("compressionAlgorithm") == "GZIP":
+        raw = gzip.decompress(raw)
+    return raw.decode("utf-8", errors="replace")
+'''
+
+
+# =============================================================================
+#  2 · PrestaShop migration to Docker
+# =============================================================================
+[[projects]]
+slug = "migracion-prestashop-docker"
+title = "Migrating PrestaShop to containers on our own VPS"
+kicker = "VapoSelección · Infrastructure"
+status = "In production"
+period = "2025 - 2026"
+role = "Designed and carried out the whole migration"
+context = "Main store + automation ecosystem"
+summary = "From shared hosting with Plesk to an Ubuntu VPS with Docker Compose, Nginx and automatic HTTPS. Multistore PrestaShop 1.7, n8n and microservices on a single reproducible stack."
+tagline = "Moving the main store and the whole automation ecosystem to our own infrastructure, reproducible and under control."
+problem = """
+The store ran on shared hosting managed with Plesk: limited resources shared with other customers, no control over the PHP version or the server, and nowhere to deploy the in-house tools the company was starting to need (n8n, microservices, ERP).
+
+Every new piece ended up being yet another external service or a patch on top of the hosting.
+"""
+solution = """
+I designed a platform on an **Ubuntu 22.04 VPS** (12 vCPU, 24 GB of RAM and 720 GB NVMe) where each service lives in its own container and is defined in **Docker Compose**. **Nginx** is the single reverse proxy: it routes each domain to its container and terminates TLS with Let's Encrypt certificates that Certbot renews automatically.
+
+I migrated **multistore PrestaShop 1.7.8** with its **MariaDB** database, files and images, keeping **PHP 7.4** in a pinned image so modules wouldn't break, and put n8n and the microservices on the same stack with separate internal networks: the database is never exposed to the internet.
+"""
+learnings = """
+A migration is mostly inventory work: listing the hidden dependencies before moving anything (cron jobs, SMTP email, absolute paths, modules that write to disk, domains stored in the database) avoids most surprises on cutover day.
+"""
+results = [
+  "Full control of the server: versions, resources, deployments and logs.",
+  "One platform for the store, the automations and the microservices.",
+  "HTTPS certificates and per-domain routing with no manual work.",
+  "Ready to deploy new internal services in minutes.",
+]
+
+[[projects.kpis]]
+value = "12 vCPU · 24 GB"
+label = "own VPS with 720 GB NVMe instead of shared hosting"
+[[projects.kpis]]
+value = "PHP 7.4"
+label = "pinned in the image to stay compatible with PrestaShop 1.7.8"
+[[projects.kpis]]
+value = "Auto HTTPS"
+label = "Let's Encrypt certificates issued and renewed with Certbot"
+
+[[projects.flow]]
+title = "Internet"
+text = "HTTPS traffic to the store and the internal tools"
+[[projects.flow]]
+title = "Nginx"
+text = "Reverse proxy, TLS termination and per-domain routing"
+[[projects.flow]]
+title = "PrestaShop"
+text = "PHP 7.4 in a container, multistore"
+[[projects.flow]]
+title = "MariaDB"
+text = "Internal network, no published ports"
+[[projects.flow]]
+title = "Services"
+text = "n8n and FastAPI microservices on the same stack"
+
+[[projects.features]]
+title = "Infrastructure as code"
+text = "The whole stack is described in `docker-compose.yml`: bringing up the environment on another machine means cloning, filling in the `.env` and starting it."
+[[projects.features]]
+title = "Hands-off TLS"
+text = "Certificates are issued and renewed automatically with Certbot. Publishing a new subdomain means adding its `server` block in Nginx and issuing the certificate."
+[[projects.features]]
+title = "Network isolation"
+text = "The database is only reachable from the application's internal network; Nginx is the only service that publishes ports."
+[[projects.features]]
+title = "Pinned versions"
+text = "PHP 7.4 with the extensions PrestaShop needs (gd, intl, zip, pdo_mysql, opcache) defined in the image."
+[[projects.features]]
+title = "Persistent data"
+text = "Product images, modules, themes and MariaDB data live in volumes, independent of the containers' lifecycle."
+[[projects.features]]
+title = "Running it in production"
+text = "Basic monitoring, per-container logs and incident handling on the server itself."
+
+[[projects.stack]]
+name = "Ubuntu 22.04 LTS"
+why = "Stable base with long-term support for the host."
+[[projects.stack]]
+name = "Docker + Compose"
+why = "Reproducible environments, predictable deployments and isolated services."
+[[projects.stack]]
+name = "Nginx"
+why = "Mature, efficient reverse proxy with fine control over virtual hosts, headers and TLS termination."
+[[projects.stack]]
+name = "MariaDB"
+why = "Compatible with the original dump and performs well on multistore queries."
+[[projects.stack]]
+name = "PrestaShop 1.7.8 / PHP 7.4"
+why = "Keeping the version meant we didn't have to migrate modules at the same time as the infrastructure."
+
+[[projects.challenges]]
+title = "Multistore and domains"
+text = "PrestaShop stores each shop's domains in the database (`ps_shop_url` and configuration). After importing the dump you have to adjust domains and paths, and rebuild the cache so each shop resolves correctly behind the proxy."
+[[projects.challenges]]
+title = "HTTPS behind a reverse proxy"
+text = "With Nginx terminating TLS, PrestaShop receives internal HTTP traffic. The `X-Forwarded-Proto` headers have to be passed along and respected to avoid redirect loops and mixed content."
+[[projects.challenges]]
+title = "Cutover with minimal downtime"
+text = "Files synced in advance with rsync, DNS TTL lowered ahead of time and, during the cutover window, a final database dump plus the file delta."
+[[projects.challenges]]
+title = "Permissions and caches"
+text = "Correct ownership (`www-data`) on `var/cache`, `img`, `upload` and modules, and clearing the Smarty and Symfony caches when switching environments."
+
+[projects.snippet]
+title = "docker-compose.yml (excerpt)"
+code = '''
+services:
+  nginx:
+    image: nginx:1.26-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]    # the only exposed service
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro      # one server block per domain
+      - /etc/letsencrypt:/etc/letsencrypt:ro     # Certbot certificates
+    networks: [proxy]
+
+  prestashop:
+    build: ./prestashop            # php:7.4-apache + gd, intl, zip, pdo_mysql, opcache
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./shop:/var/www/html
+    networks: [proxy, backend]     # Nginx reaches it through the proxy network
+
+  mariadb:
+    image: mariadb:10.6
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - db_data:/var/lib/mysql
+    networks: [backend]            # no published ports
+
+networks:
+  proxy:
+    name: proxy
+  backend:
+    internal: true
+
+volumes:
+  db_data:
+'''
+
+
+# =============================================================================
+#  3 · Dashboard
+# =============================================================================
+[[projects]]
+slug = "dashboard-ventas-almacen"
+title = "Sales, margin and warehouse rotation dashboard"
+kicker = "VapoSelección · Data"
+status = "In production"
+period = "2026"
+role = "Full design and development"
+context = "Online store + 3 physical stores"
+summary = "Internal PHP + SQL panel that brings together sales by country and channel, real gross margin and stock rotation across 3 warehouses valued at cost from Odoo. Also available as a JSON API."
+tagline = "One place to see how we're doing: sales, real margin and which stock isn't moving, per store and per warehouse."
+tags = ["PHP", "Advanced SQL", "MariaDB", "Odoo API", "n8n", "JavaScript"]
+problem = """
+Business figures were scattered: online sales in PrestaShop, physical store sales in another system, costs in the ERP and Amazon on its own.
+
+To answer simple questions, like how much we sold last week per country, what real margin each store made or how much money is tied up in stock that isn't moving, someone had to export and cross-reference spreadsheets every time.
+"""
+solution = """
+I built an internal dashboard in **PHP** with optimized **SQL** queries on PrestaShop's multistore database and cost data pulled from **Odoo**. It has two panels: **sales** (by country, channel and period) and **warehouse** (stock rotation by days without sales, valued at cost).
+
+Later I turned it into an **API**: an n8n workflow calls the scripts with a token, extracts the values and returns clean JSON so other automations and AI assistants can use the same KPIs.
+"""
+learnings = """
+If nobody trusts the numbers, the dashboard is useless. That's why I think clearly flagging when a figure is incomplete (for example, when the ERP hasn't responded) matters more than any chart.
+"""
+results = [
+  "Management checks sales, margin and idle stock without asking for exports.",
+  "Money tied up in stock that isn't moving is visible and can be prioritized.",
+  "The same KPIs feed automated reports and AI assistants through the API.",
+]
+
+[[projects.kpis]]
+value = "5 views"
+label = "online store, Medina Azahara, Arcángel, Pozoblanco and overall"
+[[projects.kpis]]
+value = "4 bands"
+label = "of rotation: live, slow, cold and dead"
+[[projects.kpis]]
+value = "JSON API"
+label = "the KPIs available to automations and AI"
+
+[[projects.flow]]
+title = "PrestaShop"
+text = "Multistore orders, customers and products in MariaDB"
+[[projects.flow]]
+title = "Odoo"
+text = "Cost price and stock per warehouse"
+[[projects.flow]]
+title = "PHP engine"
+text = "SQL queries aggregated by store, country and period"
+[[projects.flow]]
+title = "Dashboard"
+text = "Sales and warehouse panels"
+[[projects.flow]]
+title = "API"
+text = "n8n exposes the KPIs as JSON"
+
+[[projects.features]]
+title = "Sales by country and channel"
+text = "Total sales broken down into Spain, Germany, Portugal and the rest; number of orders, new customers and average order value with and without VAT."
+[[projects.features]]
+title = "Real gross margin"
+text = "Calculated on the actual cost of each product sold, not an estimated percentage, per store and date range."
+[[projects.features]]
+title = "Warehouse rotation"
+text = "Stock classified by days without sales, with its value at cost: live (0-90), slow (91-120), cold (121-180) and dead (over 180)."
+[[projects.features]]
+title = "Central warehouse logic"
+text = "For the central warehouse, the last sale on any channel counts (stores, web and Amazon); for each store, only its own sales."
+[[projects.features]]
+title = "Top idle stock"
+text = "Ranking of cold and dead products by tied-up value, to prioritize clearance sales and transfers between stores."
+[[projects.features]]
+title = "Resilient extraction"
+text = "The API reads values by element id and by label/value pairs, so it keeps working even if the panel layout changes."
+
+[[projects.stack]]
+name = "PHP"
+why = "Direct access to the PrestaShop database with no extra layers."
+[[projects.stack]]
+name = "Advanced SQL"
+why = "Multistore aggregations with JOINs and optimized subqueries on MariaDB."
+[[projects.stack]]
+name = "Odoo API"
+why = "Standard cost and stock per warehouse from the ERP."
+[[projects.stack]]
+name = "n8n"
+why = "API layer: parameter validation, token authentication and JSON responses."
+[[projects.stack]]
+name = "JavaScript"
+why = "Store and period selectors in the panel."
+
+[[projects.challenges]]
+title = "Cost and stock outside PrestaShop"
+text = "Stock value is calculated at the ERP's cost price. If Odoo doesn't respond, the panel shows an explicit indicator instead of presenting incomplete figures as if they were correct."
+[[projects.challenges]]
+title = "The heaviest query in the system"
+text = "Days without sales for the central warehouse span every channel and the whole catalog. I split the warehouse panel from the sales panel so each query runs on its own, and limited the detail to the top 20 by value."
+[[projects.challenges]]
+title = "Consistent parameters"
+text = "The older scripts used different names (`start`/`end` versus `inicio`/`fin`). The API layer normalizes aliases, validates dates and ranges, and returns clear errors with a usage example."
+
+[projects.snippet]
+title = "rotacion_almacen.sql (simplified)"
+code = '''
+-- Days since each product's last sale, and its rotation band.
+-- :shops expands to the list of id_shop values that count for that warehouse.
+SELECT
+  p.id_product,
+  pl.name,
+  DATEDIFF(CURDATE(), MAX(o.date_add)) AS dias_sin_venta,
+  CASE
+    WHEN MAX(o.date_add) IS NULL                      THEN 'sin_venta'
+    WHEN DATEDIFF(CURDATE(), MAX(o.date_add)) <= 90  THEN 'vivo'
+    WHEN DATEDIFF(CURDATE(), MAX(o.date_add)) <= 120 THEN 'lento'
+    WHEN DATEDIFF(CURDATE(), MAX(o.date_add)) <= 180 THEN 'frio'
+    ELSE 'muerto'
+  END AS tramo
+FROM ps_product p
+JOIN ps_product_lang pl
+  ON pl.id_product = p.id_product
+ AND pl.id_lang = :id_lang
+ AND pl.id_shop = :id_shop
+LEFT JOIN ps_order_detail od
+  ON od.product_id = p.id_product
+LEFT JOIN ps_orders o
+  ON o.id_order = od.id_order
+ AND o.valid = 1
+ AND o.id_shop IN (:shops)
+WHERE p.active = 1
+GROUP BY p.id_product, pl.name;
+'''
+
+
+# =============================================================================
+#  4 · AI translator
+# =============================================================================
+[[projects]]
+slug = "traductor-catalogo-ia"
+title = "AI catalog translator"
+kicker = "VapoSelección · AI"
+status = "Internal tool"
+period = "2026"
+role = "Full design and development"
+context = "Online store · Spanish, English, German and Portuguese"
+summary = "Automatic translation of product pages with LLMs: keeps the HTML intact, applies an industry glossary, validates the result and only retranslates what has changed."
+tagline = "Product pages in several languages at catalog quality, without copying and pasting into a translator."
+problem = """
+The online store sells in Spanish, English, German and Portuguese, and every product page has to be in the customer's language. Translating hundreds of descriptions into three languages by hand wasn't realistic.
+
+Generic machine translators didn't work either: they broke the HTML in the product pages, translated brands or industry terms that must stay as they are, and didn't keep a consistent tone across products.
+"""
+solution = """
+I developed a **Python** tool that reads product texts from **PrestaShop**, sends them to an **LLM** with domain-specific instructions and writes the translations in the target language.
+
+The prompt sets the tone, forbids touching HTML tags, brands and units, and includes an **industry glossary**. Every response is **validated** before being saved, and a **hash of the source text** avoids translating (and paying for) anything that hasn't changed.
+"""
+learnings = """
+Working with LLMs, I've found that a good glossary, precise instructions and validating every response have more influence on quality than the model you choose.
+"""
+results = [
+  "Product pages in English, German and Portuguese with no manual translation work.",
+  "Consistent terminology across all the store's languages.",
+  "API costs kept under control thanks to incremental processing.",
+]
+
+[[projects.kpis]]
+value = "EN · DE · PT"
+label = "target languages, starting from the Spanish catalog"
+[[projects.kpis]]
+value = "HTML intact"
+label = "tag structure validated on every translation"
+[[projects.kpis]]
+value = "Incremental"
+label = "only text that has changed is retranslated (source hash)"
+
+[[projects.flow]]
+title = "Catalog"
+text = "Names, summaries, descriptions and SEO metadata in the source language"
+[[projects.flow]]
+title = "Preparation"
+text = "Change detection by hash and splitting of long texts"
+[[projects.flow]]
+title = "LLM"
+text = "Translation with glossary, brand tone and HTML intact"
+[[projects.flow]]
+title = "Validation"
+text = "HTML tags, figures, units and SEO field length"
+[[projects.flow]]
+title = "Publishing"
+text = "Written to the target language or exported for review"
+
+[[projects.features]]
+title = "Industry glossary"
+text = "Brands, models, technical terms (coils, mesh, nicotine salts, pods) and units are kept or translated according to fixed rules."
+[[projects.features]]
+title = "HTML intact"
+text = "Checks that the translation keeps exactly the same tag structure as the original; if not, the text goes back into the queue."
+[[projects.features]]
+title = "SEO per language"
+text = "Meta title and meta description translated within each field's length limits."
+[[projects.features]]
+title = "Incremental"
+text = "Only new or modified products are translated, thanks to a hash of the source content."
+[[projects.features]]
+title = "Review mode"
+text = "Dry run that produces an Excel file with the original and the translation, to review before publishing."
+[[projects.features]]
+title = "Batch processing"
+text = "Processing in batches with retries and within the API's rate limits."
+
+[[projects.stack]]
+name = "Python"
+why = "Orchestration, validation and data access."
+[[projects.stack]]
+name = "LLM API"
+why = "Context-aware translation, better than a classic translator for sales copy."
+[[projects.stack]]
+name = "Prompt engineering"
+why = "System instructions with glossary, tone and formatting constraints."
+[[projects.stack]]
+name = "PrestaShop · MariaDB"
+why = "Direct reads and writes on the catalog's language tables."
+
+[[projects.challenges]]
+title = "Stopping the model from “improving” the text"
+text = "An LLM can add features the product doesn't have. The prompt forbids adding or removing information, and validation compares figures and units between the original and the translation."
+[[projects.challenges]]
+title = "Not breaking the HTML"
+text = "Descriptions contain lists, tables and inline styles. The tags of the original and the translation are compared; if they don't match, it retries."
+[[projects.challenges]]
+title = "Cost and time"
+text = "With the source hash and batch processing, a catalog update only translates what has changed."
+
+[projects.snippet]
+title = "translator.py (simplified)"
+code = '''
+import hashlib
+import re
+
+TAG = re.compile(r"</?([a-z0-9]+)[^>]*>", re.I)
+NUM = re.compile(r"\d+(?:[.,]\d+)?")
+
+SYSTEM = """You are a professional translator of e-commerce product pages.
+Translate from Spanish into {lang}. Rules:
+- Do not translate brands, models or units (ml, mg, W, Ω, mAh).
+- Keep the HTML tags and their order EXACTLY as they are.
+- Do not add or remove information.
+- Mandatory glossary: {glossary}
+Return only the translated text."""
+
+
+def source_hash(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def is_valid(original: str, translated: str) -> bool:
+    same_markup = TAG.findall(original) == TAG.findall(translated)
+    same_numbers = sorted(NUM.findall(original)) == sorted(NUM.findall(translated))
+    return same_markup and same_numbers
+
+
+def translate(llm, text: str, lang: str, glossary: dict[str, str], retries: int = 2) -> str:
+    rules = "; ".join(f"{src} → {dst}" for src, dst in glossary.items())
+    system = SYSTEM.format(lang=lang, glossary=rules)
+    for _ in range(retries + 1):
+        out = llm(system=system, user=text)
+        if is_valid(text, out):
+            return out
+    raise ValueError("The translation failed validation (HTML or figures)")
+'''
+
+
+# =============================================================================
+#  5 · AI assistant / MCP
+# =============================================================================
+[[projects]]
+slug = "asistente-ia-mcp"
+title = "AI assistant connected to business data"
+kicker = "VapoSelección · AI"
+status = "In production"
+period = "2026"
+role = "Architecture and development"
+context = "Sales, stock, Amazon, ERP and web analytics"
+summary = "Tools for LLMs through the Model Context Protocol (MCP): sales, margins, stock, Amazon orders, Odoo and web analytics, all queryable in plain language with real data."
+tagline = "Ask “how did each store do last week?” and get the answer from real data, not an estimate."
+problem = """
+The information needed to make decisions lived in many different systems, and every question meant knowing where to look, exporting and cross-referencing data.
+
+AI assistants were already useful for writing or coding, but they didn't know the company's real data, so their answers about the business were generic.
+"""
+solution = """
+I built a layer of tools that AI assistants can use through the **Model Context Protocol (MCP)**. The internal sales, margin, warehouse and order scripts are exposed as **n8n** workflows with validated input and JSON output.
+
+They're combined with MCP connectors for **Amazon SP-API** (orders, FBA inventory, returns, offers and reports), **Odoo** (stock, invoices and sales) and web analytics. The assistant decides which tool to use and with which parameters, and answers with real figures.
+"""
+learnings = """
+When you bring AI into a company, the model matters less than it seems. What makes the difference is the tools you give it: clear contracts, precise descriptions, strict validation and errors that explain how to fix the call.
+"""
+results = [
+  "Business questions answered in seconds with real data.",
+  "Analyses that used to need manual exports now happen in a conversation.",
+  "A reusable base: any new internal script becomes a tool in minutes.",
+]
+
+[[projects.kpis]]
+value = "MCP"
+label = "standard protocol for giving tools to LLMs"
+[[projects.kpis]]
+value = "6 sources"
+label = "PrestaShop, Amazon, Odoo, GA4, Search Console and Clarity"
+[[projects.kpis]]
+value = "Read-only"
+label = "the model never accesses the databases directly"
+
+[[projects.flow]]
+title = "Question"
+text = "Plain-language question from the team"
+[[projects.flow]]
+title = "LLM + MCP"
+text = "The assistant picks the tool and its parameters"
+[[projects.flow]]
+title = "Tools"
+text = "n8n workflows plus Amazon, Odoo and analytics connectors"
+[[projects.flow]]
+title = "Validation"
+text = "Stores, dates and ranges normalized, with errors that explain the problem"
+[[projects.flow]]
+title = "Answer"
+text = "JSON with values as text and as numbers"
+
+[[projects.features]]
+title = "Sales and margin per store"
+text = "Sales by country, average order value, new customers and real gross margin per store and period."
+[[projects.features]]
+title = "Warehouse rotation"
+text = "Live, slow, cold and dead stock valued at cost in each warehouse."
+[[projects.features]]
+title = "Amazon"
+text = "Orders, FBA inventory, returns, offers and SP-API reports across the four marketplaces."
+[[projects.features]]
+title = "ERP"
+text = "Stock, open invoice and sales summary queries in Odoo."
+[[projects.features]]
+title = "Clarity history"
+text = "The Microsoft Clarity API only returns the last few days; a workflow saves a daily snapshot to build a history you can query."
+[[projects.features]]
+title = "Shared engine"
+text = "An internal sub-workflow handles token authentication and data extraction; each tool only defines its parameters."
+
+[[projects.stack]]
+name = "Model Context Protocol"
+why = "Open standard for exposing tools to LLMs in a safe, self-describing way."
+[[projects.stack]]
+name = "n8n"
+why = "Webhooks, validation and reusable sub-workflows without deploying new services."
+[[projects.stack]]
+name = "JavaScript"
+why = "Code nodes to normalize parameters and extract data reliably."
+[[projects.stack]]
+name = "Amazon SP-API · Odoo"
+why = "The business's operational data sources."
+[[projects.stack]]
+name = "GA4 · Search Console · Clarity"
+why = "Traffic, search rankings and user behavior on the website."
+
+[[projects.challenges]]
+title = "Tools an LLM uses well"
+text = "Each tool has a precise description (what it does, parameters, units and limitations), because that's what the model reads to decide. Errors include an example of a correct call so the assistant can fix itself."
+[[projects.challenges]]
+title = "Flexible parameters, strict data"
+text = "Aliases are accepted (`start`/`inicio`, `shop`/`tienda`) and accents and capitalization are normalized, but dates, ranges and ids are validated with clear messages."
+[[projects.challenges]]
+title = "Security"
+text = "The internal scripts only accept token-authenticated requests from n8n, and the model can only run limited read queries, never touch the database."
+
+[projects.snippet]
+title = "n8n · “Normalize parameters” node"
+code = '''
+// Accepts parameters from the webhook (query/body) or from another workflow.
+const src = $input.first().json ?? {};
+const q = { ...(src.query ?? {}), ...(src.body ?? {}) };
+
+const pick = (...keys) => {
+  for (const k of keys) for (const o of [q, src]) {
+    const v = o?.[k];
+    if (v !== undefined && v !== null && String(v).trim() !== '') return String(v).trim();
+  }
+  return null;
+};
+
+const shop  = pick('shop', 'id_shop', 'tienda');
+const start = pick('start', 'inicio', 'fecha_inicio');
+const end   = pick('end', 'fin', 'fecha_fin');
+
+const example = '{"shop": "1", "start": "2026-08-11", "end": "2026-08-17"}';
+const isDate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(s ?? '');
+
+if (!/^\d+$/.test(shop ?? '')) throw new Error(`shop must be the store's numeric id. Example: ${example}`);
+if (!isDate(start) || !isDate(end)) throw new Error(`start and end must use the YYYY-MM-DD format. Example: ${example}`);
+if (end < start) throw new Error(`Inverted range: start (${start}) is after end (${end})`);
+
+return [{ json: { shop, start, end } }];
+'''
+
+
+# =============================================================================
+#  6 · n8n + FastAPI
+# =============================================================================
+[[projects]]
+slug = "plataforma-automatizacion-n8n"
+title = "Automation platform with n8n and FastAPI microservices"
+kicker = "VapoSelección · Automation"
+status = "In production"
+period = "2025 - present"
+role = "Architecture, development and operations"
+context = "Internal operations across the company"
+summary = "Self-hosted n8n on Docker as the backbone of daily operations: more than 10 workflows in production, internal forms for the team and FastAPI microservices behind Nginx for heavy data processing."
+tagline = "Repetitive tasks that no longer depend on someone remembering them: forms, cron, webhooks and in-house services working together."
+problem = """
+Many day-to-day tasks were manual and repetitive: cleaning supplier files, generating templates, moving data between Amazon, spreadsheets and email, sending reports.
+
+SaaS automation tools fell short (or got expensive) as soon as we had to process large files or apply specific business logic.
+"""
+solution = """
+I deployed **self-hosted n8n** on Docker as the central orchestrator and added in-house **FastAPI microservices**, published behind **Nginx**, for everything that shouldn't be done in visual nodes: cleaning Excel files, generating files and transforming data with Pandas.
+
+The split of responsibilities is clear: n8n handles triggers, integrations, retries and notifications; Python does the calculations.
+"""
+learnings = """
+An automation only saves time if it's reliable. Investing in error branches and clear notifications is what gets the team to trust it and stop checking by hand what the machine already does.
+"""
+results = [
+  "Processes that used to be manual are launched from a form or run on their own.",
+  "Errors detected and reported right away, not discovered days later.",
+  "New automations in hours, reusing existing sub-workflows and services.",
+]
+
+[[projects.kpis]]
+value = "+10"
+label = "active workflows in production"
+[[projects.kpis]]
+value = "3 triggers"
+label = "cron, internal forms and webhooks"
+[[projects.kpis]]
+value = "FastAPI"
+label = "in-house microservices for heavy processing"
+
+[[projects.flow]]
+title = "Trigger"
+text = "Cron, internal form or webhook"
+[[projects.flow]]
+title = "n8n"
+text = "Orchestration, error branches and reusable sub-workflows"
+[[projects.flow]]
+title = "FastAPI"
+text = "Python microservices for cleaning and generating files"
+[[projects.flow]]
+title = "Integrations"
+text = "Amazon SP-API, Google Sheets / Drive and PrestaShop"
+[[projects.flow]]
+title = "Delivery"
+text = "Email with attachment, file in Drive or JSON response"
+
+[[projects.features]]
+title = "Forms for the team"
+text = "Non-technical people launch processes (cleaning a supplier catalog, generating labels or templates) from a form and get the result by email."
+[[projects.features]]
+title = "Data microservices"
+text = "FastAPI services with Pandas to clean and normalize supplier XLSX files and generate files for Amazon."
+[[projects.features]]
+title = "Errors with context"
+text = "Every workflow has error branches that send an email explaining what failed and what to do."
+[[projects.features]]
+title = "Reusable sub-workflows"
+text = "Authentication, HTTP engines and margin calculations shared across workflows."
+[[projects.features]]
+title = "Safe testing"
+text = "Separate test and production destinations to validate changes without sending real emails to the team."
+[[projects.features]]
+title = "Self-hosted"
+text = "No execution limits per plan, and the data stays inside our own infrastructure."
+
+[[projects.stack]]
+name = "n8n"
+why = "Self-hosted visual orchestrator, with code when needed."
+[[projects.stack]]
+name = "FastAPI"
+why = "Fast, typed Python APIs with automatic OpenAPI docs."
+[[projects.stack]]
+name = "Pandas · openpyxl"
+why = "Reading, cleaning and writing Excel files."
+[[projects.stack]]
+name = "Nginx"
+why = "Exposes the services with TLS and per-domain routing."
+[[projects.stack]]
+name = "Google Sheets · Drive"
+why = "Where the team already works every day."
+
+[[projects.challenges]]
+title = "Messy supplier files"
+text = "Every supplier sends Excel files with different headers, formats and junk rows. The microservice finds the header row, normalizes the columns and drops empty rows before returning a clean file."
+[[projects.challenges]]
+title = "Binary files between services"
+text = "Files move between n8n, disk and the microservices through a working directory per date with explicit reads and writes, so large files aren't loaded into the orchestrator's memory."
+[[projects.challenges]]
+title = "Knowing when to write code"
+text = "Rule of thumb: integrations and flow in n8n; non-trivial data transformations in Python, versioned and testable."
+
+[projects.snippet]
+title = "xlsx_cleaner/main.py (simplified)"
+code = '''
+from io import BytesIO
+
+import pandas as pd
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.responses import StreamingResponse
+
+app = FastAPI(title="xlsx-cleaner")
+REQUIRED = {"referencia", "descripcion", "precio"}
+XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+
+def find_header_row(df: pd.DataFrame) -> int:
+    for i, row in df.head(30).iterrows():
+        values = {str(v).strip().lower() for v in row.dropna()}
+        if REQUIRED <= values:
+            return i
+    raise HTTPException(422, f"Columns not found: {sorted(REQUIRED)}")
+
+
+@app.post("/clean")
+async def clean(file: UploadFile = File(...)):
+    raw = pd.read_excel(BytesIO(await file.read()), header=None, dtype=str)
+    header = find_header_row(raw)
+    columns = raw.iloc[header].fillna("").str.strip().str.lower()
+    df = raw.iloc[header + 1:].set_axis(columns, axis=1)
+    df = df.dropna(how="all").drop_duplicates(subset="referencia")
+    df["precio"] = pd.to_numeric(df["precio"].str.replace(",", "."), errors="coerce")
+
+    out = BytesIO()
+    df.to_excel(out, index=False)
+    out.seek(0)
+    return StreamingResponse(out, media_type=XLSX,
+                             headers={"Content-Disposition": "attachment; filename=clean.xlsx"})
+'''
+
+
+# =============================================================================
+#  7 · PrestaShop
+# =============================================================================
+[[projects]]
+slug = "reestructuracion-prestashop"
+title = "Full rework of the PrestaShop store"
+kicker = "VapoSelección · Online store"
+status = "In production"
+period = "2025 - present"
+role = "Front-end and back-end development of the store"
+context = "Multistore PrestaShop 1.7.8"
+summary = "Deep customization of the theme and custom PHP modules on multistore PrestaShop 1.7: best-seller blocks per category, company components and optimized SQL queries."
+tagline = "A store that highlights what sells best, loads fast and can be maintained without patches."
+problem = """
+The store was carrying a theme full of piled-up customizations and third-party modules that didn't fit the way the company sells.
+
+The best-selling products in each category weren't highlighted, company components were inconsistent across shops, and some bulk catalog operations were slow.
+"""
+solution = """
+I rebuilt the presentation layer starting from the base theme and developed **custom PHP modules** following PrestaShop's architecture: hooks, back office configuration and **Smarty** templates.
+
+The product blocks are fed by optimized, **multistore**-aware **SQL** queries, with caching so they don't slow down page loads.
+"""
+learnings = """
+In PrestaShop, respecting the platform's architecture (hooks, modules, `DbQuery`) is what separates a maintainable customization from a theme that can never be updated.
+"""
+results = [
+  "Best-selling products are highlighted automatically in each category.",
+  "Consistent company components across all shops.",
+  "Faster bulk catalog operations after optimizing the queries.",
+]
+
+[[projects.kpis]]
+value = "1.7.8"
+label = "multistore PrestaShop with custom modules"
+[[projects.kpis]]
+value = "id_shop"
+label = "every query scoped per shop"
+[[projects.kpis]]
+value = "SQL"
+label = "optimized for bulk operations on MariaDB"
+
+[[projects.flow]]
+title = "Hooks"
+text = "Theme insertion points: home, category, footer"
+[[projects.flow]]
+title = "PHP module"
+text = "Logic, back office configuration and caching"
+[[projects.flow]]
+title = "SQL"
+text = "Optimized multistore queries"
+[[projects.flow]]
+title = "Smarty"
+text = "Customized theme templates"
+[[projects.flow]]
+title = "Store"
+text = "Blocks shown in each shop of the multistore"
+
+[[projects.features]]
+title = "Best sellers per category"
+text = "Block that shows the best-selling products in each category based on valid orders, calculated per shop."
+[[projects.features]]
+title = "Company components"
+text = "Custom footer and company blocks, configurable from the back office."
+[[projects.features]]
+title = "Internal analytics"
+text = "In-house components to measure how the store is used."
+[[projects.features]]
+title = "Customized theme"
+text = "Deep customization of the base theme while staying compatible with updates."
+[[projects.features]]
+title = "Optimized queries"
+text = "Review and optimization of SQL queries in bulk catalog operations on MariaDB."
+[[projects.features]]
+title = "Real multistore"
+text = "Orders, products and texts filtered by `id_shop`: each shop shows only its own data."
+
+[[projects.stack]]
+name = "PHP"
+why = "Native PrestaShop modules."
+[[projects.stack]]
+name = "Smarty"
+why = "The theme's template engine."
+[[projects.stack]]
+name = "MariaDB · SQL"
+why = "Queries with `DbQuery` and optimized aggregations."
+[[projects.stack]]
+name = "JavaScript · CSS"
+why = "Interaction and styling for the components."
+
+[[projects.challenges]]
+title = "Multistore in every query"
+text = "In a multistore setup it's easy to mix data between shops. Every query filters by `id_shop` on orders, `product_shop` and per-language texts."
+[[projects.challenges]]
+title = "Performance"
+text = "Calculating the best sellers on every visit would be expensive: the result is cached per shop and category."
+[[projects.challenges]]
+title = "Maintainability"
+text = "The logic lives in modules, not in the core, so the platform can be updated without losing changes."
+
+[projects.snippet]
+title = "topsellersbycategory.php (excerpt)"
+
+
+# =============================================================================
+#  8 · Catalog segmentation
+# =============================================================================
+[[projects]]
+slug = "segmentacion-catalogo-pricing"
+title = "Catalog segmentation and margin-based pricing"
+kicker = "VapoSelección · Pricing"
+status = "In production"
+period = "2025"
+role = "Full design and development"
+context = "Supplier price lists"
+summary = "Configurable Python script that processes supplier Excel files, calculates margins and produces Excel files segmented and color-coded by thresholds, to decide prices and which SKUs to prioritize."
+tagline = "From a supplier price list with thousands of rows to a clear purchasing decision in a single command."
+problem = """
+Supplier price lists arrive as Excel files with thousands of references and different formats.
+
+Deciding which products leave enough margin, what price to sell them at and which to prioritize meant going through the sheet by hand, with copied formulas and criteria that changed depending on who did it.
+"""
+solution = """
+I developed a configurable **Python** script that reads the supplier's price list, normalizes the columns, matches it against the selling price and calculates the **margin for each SKU**.
+
+The output is an **Excel file segmented** by margin band and color-coded with configurable thresholds, so purchasing can see at a glance what to prioritize. The file-cleaning part was also exposed as a microservice so it can be used from n8n.
+"""
+learnings = """
+If a script has good defaults and output designed for the person who will read it (colors, separate sheets, ordering), people use it. If you need to know Python to use it, it ends up forgotten.
+"""
+results = [
+  "Pricing decisions made with a single, repeatable criterion.",
+  "Automatic prioritization of the highest-margin SKUs.",
+  "A full price list reviewed in minutes instead of hours.",
+]
+
+[[projects.kpis]]
+value = "Thresholds"
+label = "margin thresholds set by parameter"
+[[projects.kpis]]
+value = "Excel ready"
+label = "segmented and color-coded for the purchasing team"
+[[projects.kpis]]
+value = "1 command"
+label = "from the supplier's price list to the decision"
+
+[[projects.flow]]
+title = "Price list"
+text = "The supplier's Excel file as it arrives"
+[[projects.flow]]
+title = "Normalization"
+text = "Headers, number formats and references"
+[[projects.flow]]
+title = "Calculation"
+text = "Margin per SKU with configurable costs"
+[[projects.flow]]
+title = "Segmentation"
+text = "Bands based on margin thresholds"
+[[projects.flow]]
+title = "Final Excel"
+text = "One color-coded sheet per segment"
+
+[[projects.features]]
+title = "Configurable"
+text = "Thresholds, columns and costs are passed as arguments: the same script works for different suppliers."
+[[projects.features]]
+title = "Color by margin"
+text = "Each row is colored according to its band so it reads at a glance."
+[[projects.features]]
+title = "One sheet per segment"
+text = "Separate sheets per margin band, to work on each group on its own."
+[[projects.features]]
+title = "Prioritization"
+text = "Within each band, rows are sorted by margin to bring the most profitable SKUs to the top."
+
+[[projects.stack]]
+name = "Python"
+why = "Reusable command-line script."
+[[projects.stack]]
+name = "Pandas"
+why = "Cleaning and vectorized calculations over thousands of rows."
+[[projects.stack]]
+name = "openpyxl"
+why = "Formatting and colors in the output Excel file."
+[[projects.stack]]
+name = "argparse"
+why = "Parameters without touching the code."
+
+[[projects.challenges]]
+title = "European number formats"
+text = "Decimal commas, currency symbols and text cells are normalized before calculating, so rows aren't silently dropped."
+[[projects.challenges]]
+title = "Inconsistent files"
+text = "Header row detection and column name mapping per supplier."
+
+[projects.snippet]
+title = "segmentar_tarifa.py (simplified)"
+code = '''
+import argparse
+
+import pandas as pd
+
+COLORS = {"alto": "#C6EFCE", "medio": "#FFEB9C", "bajo": "#FFC7CE"}
+
+
+def segment(df: pd.DataFrame, low: float, high: float) -> pd.DataFrame:
+    df["margen_pct"] = (df["pvp_sin_iva"] - df["coste"]) / df["pvp_sin_iva"] * 100
+    df["segmento"] = pd.cut(
+        df["margen_pct"],
+        bins=[-float("inf"), low, high, float("inf")],
+        labels=["bajo", "medio", "alto"],
+    )
+    return df.sort_values(["segmento", "margen_pct"], ascending=[False, False])
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description="Segments a supplier price list by margin")
+    ap.add_argument("tarifa")
+    ap.add_argument("--bajo", type=float, default=15, help="margin %% below which it counts as low")
+    ap.add_argument("--alto", type=float, default=30, help="margin %% from which it counts as high")
+    ap.add_argument("-o", "--out", default="tarifa_segmentada.xlsx")
+    args = ap.parse_args()
+
+    df = segment(pd.read_excel(args.tarifa), args.bajo, args.alto)
+    paint = lambda row: [f"background-color: {COLORS[row.segmento]}"] * len(row)
+
+    with pd.ExcelWriter(args.out, engine="openpyxl") as xw:
+        df.style.apply(paint, axis=1).to_excel(xw, sheet_name="todo", index=False)
+        for seg, part in df.groupby("segmento", observed=True):
+            part.style.apply(paint, axis=1).to_excel(xw, sheet_name=str(seg), index=False)
+
+
+if __name__ == "__main__":
+    main()
+'''
+
+
+# =============================================================================
+#  9 · Odoo
+# =============================================================================
+[[projects]]
+slug = "implantacion-odoo-erp"
+title = "Odoo ERP rollout and centralized stock"
+kicker = "VapoSelección · ERP"
+status = "Rollout in progress"
+period = "2026"
+role = "Technical lead for the project (with an external partner)"
+context = "Web, Amazon and 3 physical stores"
+summary = "Technical coordination of the Odoo rollout with an external partner to centralize stock for the web store, Amazon and 3 physical stores, remove manual syncing, unify accounting and comply with Verifactu."
+tagline = "Stock, sales and accounting for every sales channel in a single system."
+tags = ["Odoo", "ERP", "PrestaShop", "POS", "Verifactu", "Python", "Integrations"]
+problem = """
+Stock for the online store, Amazon and the three physical stores (Pozoblanco, Medina Azahara and Arcángel) was managed in different systems with manual syncing.
+
+That led to inventory mismatches, sales of out-of-stock products and a lot of admin work, on top of the need to adapt invoicing to **Verifactu**, the Spanish tax agency's new invoicing requirements.
+"""
+solution = """
+I lead the **Odoo** rollout on the company side together with an external partner: requirements, warehouse model (one central warehouse plus one per store), cleaning and migrating master data, testing the **POS** in the stores and integrating with **PrestaShop**.
+
+In parallel, the rest of the ecosystem already reads Odoo data through the API: the rotation dashboard values stock using the ERP's cost, and the AI assistants query stock, invoices and sales.
+"""
+learnings = """
+In an ERP project the technical side is the easy part. The real challenge is understanding each business process, turning it into concrete requirements and helping the team through the change in how they work.
+"""
+results = [
+  "Groundwork to remove manual stock syncing between channels.",
+  "Real product cost available for margin and rotation calculations.",
+  "Invoicing and accounting ready for Verifactu.",
+]
+
+[[projects.kpis]]
+value = "4 channels"
+label = "web, Amazon and physical stores on a single inventory"
+[[projects.kpis]]
+value = "3 stores"
+label = "with Odoo POS, one of them the central warehouse"
+[[projects.kpis]]
+value = "Verifactu"
+label = "invoicing adapted to the Spanish regulation"
+
+[[projects.flow]]
+title = "PrestaShop"
+text = "Online store orders and catalog"
+[[projects.flow]]
+title = "Amazon"
+text = "FBA and FBM sales across 4 marketplaces"
+[[projects.flow]]
+title = "Store POS"
+text = "Pozoblanco, Medina Azahara and Arcángel"
+[[projects.flow]]
+title = "Odoo"
+text = "Stock, purchasing, sales and accounting"
+[[projects.flow]]
+title = "Downstream use"
+text = "Dashboards, n8n and AI assistants through the API"
+
+[[projects.features]]
+title = "Centralized stock"
+text = "A single inventory with a central warehouse and one warehouse per store."
+[[projects.features]]
+title = "POS in the stores"
+text = "Odoo point of sale in the physical stores, with training for the team."
+[[projects.features]]
+title = "Accounting and Verifactu"
+text = "Invoicing and accounting ready for the Verifactu regulation."
+[[projects.features]]
+title = "Master data"
+text = "Cleaning and migrating the catalog: references, costs and suppliers."
+[[projects.features]]
+title = "API integration"
+text = "Odoo standard cost and stock used by dashboards and automations."
+[[projects.features]]
+title = "AI connector"
+text = "Stock, invoice and sales queries from AI assistants."
+
+[[projects.stack]]
+name = "Odoo"
+why = "Modular ERP: inventory, purchasing, sales, POS and accounting."
+[[projects.stack]]
+name = "Odoo external API"
+why = "Reading stock and costs from the other systems."
+[[projects.stack]]
+name = "PrestaShop"
+why = "Online channel integrated with the ERP."
+[[projects.stack]]
+name = "Python · n8n"
+why = "Integration and data validation scripts and workflows."
+
+[[projects.challenges]]
+title = "Master data quality"
+text = "If bad data goes into the ERP, bad data comes out. Before migrating, duplicate references, outdated costs and inactive products have to be cleaned up."
+[[projects.challenges]]
+title = "Working with the partner"
+text = "Turning the real store, warehouse and Amazon processes into concrete requirements for the partner, and validating each delivery with tests."
+[[projects.challenges]]
+title = "Coexistence during the transition"
+text = "While the rollout moves forward, the current systems keep running: new developments read from Odoo as soon as the data is available."
+
+[projects.snippet]
+title = "odoo_stock.py (simplified)"
+code = '''
+import os
+import xmlrpc.client
+
+URL = os.environ["ODOO_URL"]
+DB = os.environ["ODOO_DB"]
+USER = os.environ["ODOO_USER"]
+API_KEY = os.environ["ODOO_API_KEY"]
+
+uid = xmlrpc.client.ServerProxy(f"{URL}/xmlrpc/2/common").authenticate(DB, USER, API_KEY, {})
+models = xmlrpc.client.ServerProxy(f"{URL}/xmlrpc/2/object")
+
+
+def stock_by_location(default_code: str) -> dict[str, float]:
+    """Available stock (quantity - reserved) for a reference, per internal location."""
+    quants = models.execute_kw(
+        DB, uid, API_KEY, "stock.quant", "search_read",
+        [[["product_id.default_code", "=", default_code],
+          ["location_id.usage", "=", "internal"]]],
+        {"fields": ["location_id", "quantity", "reserved_quantity"]},
+    )
+    stock: dict[str, float] = {}
+    for q in quants:
+        location = q["location_id"][1]
+        stock[location] = stock.get(location, 0) + q["quantity"] - q["reserved_quantity"]
+    return stock
+'''
+
+
+# =============================================================================
+#  10 · AdvanceBoy (personal)
+# =============================================================================
+[[projects]]
+slug = "advanceboy-emulador-gba"
+title = "AdvanceBoy: Game Boy Advance emulator for Android"
+kicker = "Personal project · Open source"
+status = "Open source"
+period = "2026"
+role = "Personal project · full development"
+context = "Android · Kotlin + C"
+summary = "Android app in Kotlin built on the mGBA C core (JNI + NDK): game library, editable touch controls, save states, rewind, cheats, OpenGL shaders and CI that builds and publishes the APK."
+tagline = "A complete GBA emulator with everything I expect from the best apps in the genre, built on the most accurate emulation core around."
+problem = """
+I wanted a GBA emulator for Android with everything I expect as a player (save states with thumbnails, fast forward, rewind, physical controllers, cartridge sensors) and, at the same time, a project to step away from the web and work with native code, graphics and real-time audio.
+"""
+solution = """
+The app is written in **Kotlin** and uses **mGBA** as its core, compiled with the **NDK** and **CMake**. A custom **JNI** bridge exposes what the Kotlin side needs: loading ROMs, stepping frames, audio, save states and cheats.
+
+Rendering goes through **OpenGL ES** with selectable shaders, and the emulation thread is paced by the audio itself. **GitHub Actions** runs core tests with test ROMs, builds the APK on every push and publishes releases on tags.
+"""
+learnings = """
+Stepping out of my usual area (web and backend) into Android and C forced me to think about per-frame performance, threads and resource lifecycles. I documented the project by comparing each Android concept with its web equivalent, which helped me as much as anyone reading it.
+"""
+results = [
+  "A complete GBA, GB and GBC emulator I use every day.",
+  "CI/CD pipeline: core tests, signed APK and automatic release on tag.",
+  "Hands-on experience with native code, OpenGL and real-time audio.",
+]
+
+[[projects.links]]
+label = "View repository"
+url = "https://github.com/JoseLuixrax/gba-emulator"
+icon = "github"
+
+[[projects.kpis]]
+value = "mGBA 0.10.5"
+label = "C emulation core integrated through JNI"
+[[projects.kpis]]
+value = "59.73 Hz"
+label = "emulation loop synced to the audio"
+[[projects.kpis]]
+value = "CI/CD"
+label = "core tests, APK and releases with GitHub Actions"
+
+[[projects.flow]]
+title = "ROM"
+text = "Library with folder scanning: .gba, .gb, .gbc and .zip"
+[[projects.flow]]
+title = "Kotlin"
+text = "UI, controls, settings, controllers and sensors"
+[[projects.flow]]
+title = "JNI"
+text = "C ↔ Kotlin bridge"
+[[projects.flow]]
+title = "mGBA (C)"
+text = "CPU, video, audio and cartridge hardware"
+[[projects.flow]]
+title = "OpenGL ES + audio"
+text = "Frames with shaders and synced sound"
+
+[[projects.features]]
+title = "Editable touch controls"
+text = "Drag and resize every button, with separate layouts for portrait and landscape."
+[[projects.features]]
+title = "Save states"
+text = "10 slots plus autosave, with thumbnail and date."
+[[projects.features]]
+title = "Speed and rewind"
+text = "From 0.1× slow motion up to 8× or unlimited fast forward, plus rewind by holding a button."
+[[projects.features]]
+title = "Cheats"
+text = "GameShark, Action Replay, CodeBreaker and Game Genie with automatic format detection."
+[[projects.features]]
+title = "Cartridge hardware"
+text = "Real-time clock, rumble, tilt, gyroscope and solar sensor mapped to the phone's sensors."
+[[projects.features]]
+title = "Shaders"
+text = "Sharp, pixelated, smooth, scanline, LCD and GBA color correction filters."
+[[projects.features]]
+title = "Physical controllers"
+text = "Bluetooth and USB with button remapping."
+[[projects.features]]
+title = "Accessible saves"
+text = "Importable and exportable .sav files, visible from the Files app through a custom documents provider."
+
+[[projects.stack]]
+name = "Kotlin"
+why = "App UI and logic with ViewBinding."
+[[projects.stack]]
+name = "C + JNI (NDK)"
+why = "Native bridge to the emulation core."
+[[projects.stack]]
+name = "mGBA"
+why = "The most accurate open source GBA core."
+[[projects.stack]]
+name = "OpenGL ES"
+why = "GPU rendering with shaders."
+[[projects.stack]]
+name = "CMake + Gradle"
+why = "Native and app builds; mGBA is downloaded during the build."
+[[projects.stack]]
+name = "GitHub Actions"
+why = "Core tests, build, signing and APK publishing."
+
+[[projects.challenges]]
+title = "Syncing video and audio"
+text = "At normal speed, the blocking audio write sets the pace (the GBA produces exactly one second of audio per emulated second). When muted, fast-forwarding or rewinding, a 59.73 Hz timer takes over."
+[[projects.challenges]]
+title = "A single thread for the core"
+text = "Everything that touches the native core has to run on the emulation thread. Other threads send it work through a concurrent queue."
+[[projects.challenges]]
+title = "Storage on modern Android"
+text = "Since Android 11, file managers can't open `Android/data`. Saves are exposed through a custom DocumentsProvider."
+[[projects.challenges]]
+title = "Reproducible releases"
+text = "The workflow checks that the tag matches `versionName` and always signs with the same key, so each APK installs over the previous one without losing saves."
+
+[projects.snippet]
+title = "EmulatorThread.kt (excerpt)"
+note = "Open source: the full project is on GitHub."
+code = '''
+/**
+ * Runs the emulator: one loop iteration = one emulated frame.
+ *  - Normal speed with sound: the blocking audio write sets the pace.
+ *  - Muted, fast forward or rewind: 59.73 Hz timer.
+ * Everything that touches the native core runs on this thread; everything else uses post().
+ */
+class EmulatorThread(
+    private val frameBuffer: FrameBuffer,
+    private val audio: AudioOutput,
+    private val callbacks: Callbacks,
+) : Thread("Emulator") {
+
+    @Volatile var fastForward = false
+    @Volatile var rewinding = false
+    private val tasks = ConcurrentLinkedQueue<Runnable>()
+
+    fun post(task: Runnable) {
+        tasks.add(task)
+        wake()
+    }
+
+    override fun run() {
+        Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_DISPLAY)
+        var nextFrameTime = System.nanoTime()
+        while (true) {
+            runPendingTasks()
+            if (quitRequested) break
+            if (paused) { waitWhilePaused(); continue }
+
+            nextFrameTime = when {
+                rewinding -> stepRewind(nextFrameTime)
+                fastForward -> stepFastForward(nextFrameTime)
+                else -> stepNormal(nextFrameTime)
+            }
+            if (NativeBridge.pollRumble()) callbacks.onRumble()
+        }
+    }
+}
+'''
+
+
+# =============================================================================
+#  11 · Discord Voice AI (personal)
+# =============================================================================
+[[projects]]
+slug = "discord-voice-ai"
+title = "Discord Voice AI: a voice assistant for Discord"
+kicker = "Personal project · Open source"
+status = "Open source"
+period = "2025"
+role = "Personal project · full development"
+context = "Discord bot · near real-time voice"
+summary = "Bot that listens to the voice channel, detects when you stop talking, transcribes with Whisper, replies with an LLM and answers with synthesized speech in the same channel."
+tagline = "Talking to an AI assistant as just another person in the conversation, without typing a single command."
+problem = """
+I wanted to be able to talk to an AI assistant inside a Discord voice channel, as just another participant, without having to type a command for every question.
+"""
+solution = """
+A **Python** bot built with **discord.py** and its voice receive extension. A custom *sink* receives each user's PCM audio, detects speech and silence by calculating the energy (**RMS**) and, when someone finishes talking, sends the clip to **Whisper** for transcription.
+
+The transcript goes to an **LLM** that writes a short, conversational reply, which is synthesized with **TTS** and played in the channel through **FFmpeg**.
+"""
+learnings = """
+Working with real-time audio makes you think about latency: every stage (detection, transcription, reply and synthesis) adds up, and how smooth it feels depends on trimming all of them.
+"""
+results = [
+  "Natural voice conversation with an LLM inside Discord.",
+  "Several users in the same channel, each with their own buffer.",
+  "A base for experimenting with near real-time voice assistants.",
+]
+
+[[projects.links]]
+label = "View repository"
+url = "https://github.com/JoseLuixrax/Discord-Voice-AI"
+icon = "github"
+
+[[projects.kpis]]
+value = "STT → LLM → TTS"
+label = "complete voice pipeline"
+[[projects.kpis]]
+value = "1.2 s"
+label = "of silence to detect the end of a sentence"
+[[projects.kpis]]
+value = "Multi-user"
+label = "independent audio buffers per person"
+
+[[projects.flow]]
+title = "Voice channel"
+text = "48 kHz stereo PCM audio per user"
+[[projects.flow]]
+title = "Detection"
+text = "RMS energy and silence threshold"
+[[projects.flow]]
+title = "Whisper"
+text = "Transcription of the clip"
+[[projects.flow]]
+title = "LLM"
+text = "Short, conversational reply"
+[[projects.flow]]
+title = "TTS + FFmpeg"
+text = "Spoken reply in the channel"
+
+[[projects.features]]
+title = "Continuous listening"
+text = "`!join` and `!leave` commands; from then on the bot listens with no further interaction."
+[[projects.features]]
+title = "Per-user buffers"
+text = "Each person has their own buffer and state, so several people can talk in the same channel."
+[[projects.features]]
+title = "End of sentence"
+text = "Energy threshold and minimum duration to ignore noise and clips that are too short."
+[[projects.features]]
+title = "Doesn't hear itself"
+text = "While it plays a reply, the bot ignores incoming audio."
+[[projects.features]]
+title = "Async processing"
+text = "Transcription, reply and synthesis run in the background without blocking audio reception."
+[[projects.features]]
+title = "No leftovers"
+text = "Intermediate WAV and MP3 files are deleted after use."
+
+[[projects.stack]]
+name = "Python + asyncio"
+why = "Concurrency between the audio thread and the bot's event loop."
+[[projects.stack]]
+name = "discord.py + voice_recv"
+why = "Receives voice audio separated per user."
+[[projects.stack]]
+name = "Whisper"
+why = "Robust transcription in several languages."
+[[projects.stack]]
+name = "LLM · TTS (OpenAI API)"
+why = "Reply generation and speech synthesis."
+[[projects.stack]]
+name = "FFmpeg"
+why = "Audio playback in the channel."
+
+[[projects.challenges]]
+title = "Knowing when someone has finished talking"
+text = "No external VAD: RMS is calculated by hand for each PCM packet, with a silence threshold and a minimum audio length so noise isn't transcribed."
+[[projects.challenges]]
+title = "Threads and the event loop"
+text = "The sink receives audio on a different thread from asyncio; processing is scheduled with `run_coroutine_threadsafe` so neither one blocks."
+[[projects.challenges]]
+title = "Avoiding echo loops"
+text = "The bot drops incoming audio while it's speaking so it doesn't transcribe its own reply."
+
+[projects.snippet]
+title = "main.py (simplified excerpt)"
+note = "Open source: the full project is on GitHub."
+code = '''
+class ContinuousSink(voice_recv.AudioSink):
+    SILENCE_THRESHOLD = 500   # RMS amplitude
+    SILENCE_DURATION = 1.2    # seconds of silence = end of sentence
+
+    def wants_opus(self):
+        return False          # we want PCM
+
+    def write(self, user, data):
+        if user is None or self.voice_client.is_playing():
+            return            # don't listen to itself
+
+        pcm = data.pcm
+        samples = struct.unpack(f"<{len(pcm) // 2}h", pcm)
+        rms = math.sqrt(sum(s * s for s in samples) / len(samples)) if samples else 0
+        now = time.time()
+
+        rec = self.user_data.setdefault(user.id, {"buffer": bytearray(), "last": now, "busy": False})
+        if rec["busy"]:
+            return
+
+        if rms > self.SILENCE_THRESHOLD:
+            rec["buffer"].extend(pcm)
+            rec["last"] = now
+        elif rec["buffer"] and now - rec["last"] > self.SILENCE_DURATION:
+            audio, rec["buffer"], rec["busy"] = bytes(rec["buffer"]), bytearray(), True
+            asyncio.run_coroutine_threadsafe(self.process_audio(user, audio), self.bot.loop)
+'''
+
+
+# =============================================================================
+#  12 · Pokémon Draft Tournament (personal)
+# =============================================================================
+[[projects]]
+slug = "pokemon-draft-tournament"
+title = "Pokémon Draft Tournament"
+kicker = "Personal project · Open source"
+status = "Open source"
+period = "2026"
+role = "Personal project · full development"
+context = "Web app with no dependencies"
+summary = "Single-page web app for running Pokémon draft tournaments with friends: players, rounds, drag & drop pairings, picks with PokeAPI sprites and a live leader."
+tagline = "Running a draft tournament with friends on one screen, with no spreadsheets or lost messages."
+problem = """
+We ran Pokémon draft tournaments with friends using spreadsheets and messages: who had picked which Pokémon, each round's pairings and the standings. It was awkward and easy to mess up.
+"""
+solution = """
+A web app in a single **HTML + JavaScript** file with no dependencies. It manages players, creates rounds and pairings by dragging players with **drag & drop**, records picks with a search over the Pokémon from **PokeAPI** (with sprites and regional forms) and shows the leader in real time.
+
+The full tournament state can be **exported and imported as JSON**, so it can be shared or continued on another device.
+"""
+learnings = """
+Not everything needs a framework: for a small, focused tool, dependency-free JavaScript is faster to build, deploy and maintain.
+"""
+results = [
+  "Tournaments run on one screen and shareable as a JSON file.",
+  "A small, useful project the group actually uses.",
+]
+
+[[projects.links]]
+label = "View repository"
+url = "https://github.com/JoseLuixrax/PokeTournament"
+icon = "github"
+
+[[projects.kpis]]
+value = "1,025"
+label = "Pokémon loaded from PokeAPI, plus regional forms"
+[[projects.kpis]]
+value = "0"
+label = "dependencies and no backend"
+[[projects.kpis]]
+value = "JSON"
+label = "to export and import the tournament"
+
+[[projects.flow]]
+title = "Players"
+text = "Add participants"
+[[projects.flow]]
+title = "Rounds"
+text = "Pairings with drag & drop"
+[[projects.flow]]
+title = "Draft"
+text = "Picks with search and sprites"
+[[projects.flow]]
+title = "Standings"
+text = "Current leader in real time"
+[[projects.flow]]
+title = "JSON"
+text = "Export and import the tournament"
+
+[[projects.features]]
+title = "Drag & drop"
+text = "Drag players into the slots of each pairing."
+[[projects.features]]
+title = "PokeAPI"
+text = "Full list of Pokémon with official sprites and a fallback if an image fails to load."
+[[projects.features]]
+title = "Rounds in tabs"
+text = "Each round with its pairings and results."
+[[projects.features]]
+title = "Portable state"
+text = "Export and import the full state as JSON."
+
+[[projects.stack]]
+name = "Vanilla JavaScript"
+why = "State and rendering without a framework."
+[[projects.stack]]
+name = "HTML5 Drag and Drop"
+why = "A natural way to pair players."
+[[projects.stack]]
+name = "PokeAPI"
+why = "Pokémon data and sprites."
+[[projects.stack]]
+name = "CSS3"
+why = "Themed interface."
+
+[[projects.challenges]]
+title = "State without a framework"
+text = "A single state object and render functions that repaint the view after each change, like a minimal reactive framework."
+[[projects.challenges]]
+title = "Over a thousand Pokémon with no backend"
+text = "A single PokeAPI call for the list, and sprite URLs built from the id, with no request per Pokémon."
+
+[projects.snippet]
+title = "index.html · loading Pokémon"
+note = "Open source: the full project is on GitHub."
